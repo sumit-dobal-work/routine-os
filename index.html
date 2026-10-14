@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RoutineOS">
+    <meta name="theme-color" content="#0B0F17">
+    <title>RoutineOS — AI Engineer & Fitness Daily OS</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Phosphor Icons for crisp iOS-grade iconography -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Inter & JetBrains Mono Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0B0F17',
+                        slateCard: '#131B2E',
+                        slateBorder: '#1E293B',
+                        emeraldAccent: '#10B981',
+                        indigoAccent: '#6366F1',
+                        amberAccent: '#F59E0B',
+                        roseAccent: '#F43F5E'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        :root {
+            --safe-top: env(safe-area-inset-top, 16px);
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0B0F17;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.10) 0px, transparent 50%);
+            color: #F8FAFC;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overscroll-behavior-y: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        input, textarea, select {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        .pt-safe {
+            padding-top: max(12px, var(--safe-top));
+        }
+
+        .pb-safe-nav {
+            padding-bottom: calc(88px + var(--safe-bottom));
+        }
+
+        .pb-tabbar {
+            padding-bottom: max(10px, var(--safe-bottom));
+        }
+
+        .glass-card {
+            background: rgba(19, 27, 46, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-header {
+            background: rgba(11, 15, 23, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .glass-tabbar {
+            background: rgba(13, 18, 30, 0.88);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-top: 1px solid rgba(255, 255, 255, 0.09);
+        }
+
+        .active-glow-emerald {
+            box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.35);
+            border-color: rgba(16, 185, 129, 0.55);
+        }
+
+        .active-glow-indigo {
+            box-shadow: 0 0 25px -4px rgba(99, 102, 241, 0.35);
+            border-color: rgba(99, 102, 241, 0.55);
+        }
+
+        /* Custom sleek scrollbars */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 9999px;
+        }
+
+        @keyframes pulse-Subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.65; transform: scale(0.96); }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-Subtle 2.2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+
+    <header class="glass-header sticky top-0 z-40 pt-safe px-4 pb-3 transition-all">
+        <div class="max-w-xl mx-auto flex flex-col gap-2.5">
+            <!-- Top Row: Brand, Mode Toggle, Daily Progress Ring & Install Guide -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <i class="ph-bold ph-cpu text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <h1 class="font-bold text-base tracking-tight text-white">RoutineOS</h1>
+                            <span id="liveClockBadge" class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-slate-800/90 text-emerald-400 border border-slate-700/70">07:00</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 leading-none mt-0.5">AI Roadmap • 6h Work • PPL • Fuel</p>
+                    </div>
+                </div>
+
+                <!-- Right Controls: Mode Pill, Completion Ring, iOS Install Button -->
+                <div class="flex items-center gap-2">
+                    <!-- Weekday / Weekend Switcher -->
+                    <button id="scheduleModeBtn" onclick="toggleScheduleMode()" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition-all bg-indigo-500/15 border-indigo-500/40 text-indigo-300 active:scale-95">
+                        <i id="scheduleModeIcon" class="ph-fill ph-briefcase text-sm"></i>
+                        <span id="scheduleModeLabel">Weekday</span>
+                    </button>
+
+                    <!-- SVG Daily Completion Ring -->
+                    <div class="relative w-10 h-10 flex items-center justify-center" title="Daily Routine Completion">
+                        <svg class="w-10 h-10 -rotate-90 transform" viewBox="0 0 36 36">
+                            <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path id="headerProgressCircle" class="text-emerald-400 transition-all duration-500" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <span id="headerProgressText" class="absolute font-mono text-[10px] font-bold text-slate-200">0%</span>
+                    </div>
+
+                    <!-- iPhone PWA Install Guide Trigger -->
+                    <button onclick="openModal('iosInstallModal')" class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/70 flex items-center justify-center text-slate-300 hover:text-white active:scale-95" aria-label="Install on iPhone">
+                        <i class="ph-bold ph-device-mobile text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Second Row: Date Navigator Bar -->
+            <div class="flex items-center justify-between bg-slate-900/90 border border-slate-800/90 rounded-xl px-2 py-1.5">
+                <button onclick="changeDate(-1)" class="p-1.5 rounded-lg text-slate-400 hover:text-white active:bg-slate-800 transition">
+                    <i class="ph-bold ph-caret-left text-sm"></i>
+                </button>
+
+                <div class="flex items-center gap-2">
+                    <i class="ph-duotone ph-calendar-blank text-indigo-400 text-sm"></i>
+                    <input type="date" id="datePickerInput" onchange="onDateInputChange(this.value)" class="bg-transparent text-xs font-semibold text-slate-100 focus:outline-none cursor-pointer font-mono" />
+                    <span id="dateFriendlyLabel" class="text-[11px] font-medium text-slate-400 hidden sm:inline">Today</span>
+                </div>
+
+                <div class="flex items-center gap-1">
+                    <button id="todayJumpBtn" onclick="jumpToToday()" class="px-2 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold active:scale-95">
+                        Today
+                    </button>
+                    <button onclick="changeDate(1)" class="p-1.5 rounded-lg text-slate-400 hover:text-white active:bg-slate-800 transition">
+                        <i class="ph-bold ph-caret-right text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="floatingRestBar" class="hidden fixed top-[108px] inset-x-0 z-30 px-4 pointer-events-none">
+        <div class="max-w-xl mx-auto pointer-events-auto glass-card rounded-2xl p-3 border border-amber-500/50 shadow-2xl shadow-amber-500/10 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                    <i class="ph-bold ph-timer text-lg animate-spin"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-300">Rest Timer</span>
+                        <span id="restTimerCountdown" class="font-mono text-base font-extrabold text-white">01:30</span>
+                    </div>
+                    <div class="w-36 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                        <div id="restTimerProgressBar" class="h-full bg-amber-400 transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <button onclick="adjustRestTimer(15)" class="px-2 py-1 rounded-lg bg-slate-800 text-xs font-mono text-slate-200 border border-slate-700 active:scale-95">+15s</button>
+                <button onclick="stopRestTimer()" class="px-2.5 py-1 rounded-lg bg-rose-500/20 border border-rose-500/40 text-xs font-semibold text-rose-300 active:scale-95">Skip</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-xl mx-auto px-4 pt-4 pb-safe-nav space-y-5">
+
+        <!-- ===================================================================== -->
+        <!-- TAB 1: ROUTINE (LIVE SCHEDULE, 6H WORK COUNTER & PINNED MODULES)      -->
+        <!-- ===================================================================== -->
+        <section id="tab-routine" class="tab-pane space-y-4">
+            
+            <!-- Live Active Block Spotlight Banner -->
+            <div id="liveBlockBanner" class="glass-card rounded-2xl p-4 active-glow-emerald transition-all relative overflow-hidden">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                Active Now
+                            </span>
+                            <span id="liveBlockTimeRange" class="font-mono text-xs text-slate-400">07:30 – 09:30</span>
+                        </div>
+                        <h2 id="liveBlockTitle" class="text-base font-bold text-white leading-snug">AI Study Block 1 (Deep Focus)</h2>
+                        <p id="liveBlockSubtitle" class="text-xs text-slate-300">Heavy coding, Python & RAG architecture while mind is fresh.</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span id="liveBlockCountdown" class="font-mono text-xs font-bold px-2.5 py-1 rounded-xl bg-slate-900/90 border border-slate-700 text-emerald-400 block">45m left</span>
+                        <button id="liveBlockActionBtn" onclick="triggerLiveBlockAction()" class="mt-2 text-[11px] font-semibold text-indigo-300 hover:text-indigo-200 inline-flex items-center gap-1">
+                            <span>Open Tool</span>
+                            <i class="ph-bold ph-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Live Block Progress Bar -->
+                <div class="mt-3">
+                    <div class="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
+                        <span id="liveBlockElapsedText">Elapsed: 0m</span>
+                        <span id="liveBlockNextText">Next: Work Block 1</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-900/90 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                        <div id="liveBlockProgressBar" class="h-full bg-gradient-to-r from-emerald-500 to-indigo-500 rounded-full transition-all duration-500" style="width: 35%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.0 Hour Work Tracker & Core Fuel Quick-Bar -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- 6.0h Work Quota Card -->
+                <div class="glass-card rounded-2xl p-3.5 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                                <i class="ph-bold ph-code text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-white">Work Quota (6.0h)</h3>
+                                <p class="text-[10px] text-slate-400">+ 2.0h Evening Meetings</p>
+                            </div>
+                        </div>
+                        <span id="workHoursTotalBadge" class="font-mono text-sm font-bold text-indigo-300">0.0 / 6.0h</span>
+                    </div>
+
+                    <!-- Work Progress Bar -->
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden mb-2.5 border border-slate-800">
+                        <div id="workHoursBar" class="h-full bg-indigo-500 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+
+                    <!-- 3 Work Block Quick Toggles -->
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button id="workBtn1" onclick="toggleWorkSprint('b1', 2.5)" class="py-1.5 px-2 rounded-xl border text-center transition-all bg-slate-900/60 border-slate-800 text-slate-400 active:scale-95">
+                            <div class="font-mono text-xs font-bold">2.5h</div>
+                            <div class="text-[10px] truncate">AM WFH</div>
+                        </button>
+                        <button id="workBtn2" onclick="toggleWorkSprint('b2', 3.0)" class="py-1.5 px-2 rounded-xl border text-center transition-all bg-slate-900/60 border-slate-800 text-slate-400 active:scale-95">
+                            <div class="font-mono text-xs font-bold">3.0h</div>
+                            <div class="text-[10px] truncate">Office</div>
+                        </button>
+                        <button id="workBtn3" onclick="toggleWorkSprint('b3', 0.5)" class="py-1.5 px-2 rounded-xl border text-center transition-all bg-slate-900/60 border-slate-800 text-slate-400 active:scale-95">
+                            <div class="font-mono text-xs font-bold">0.5h</div>
+                            <div class="text-[10px] truncate">6PM AirFry</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Anchors: Shakes, Chicken & AI Study -->
+                <div class="glass-card rounded-2xl p-3.5 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                                <i class="ph-bold ph-lightning text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-white">Daily Non-Negotiables</h3>
+                                <p class="text-[10px] text-slate-400">Tap to log instant anchors</p>
+                            </div>
+                        </div>
+                        <span id="TomorrowChickenPrepBadge" class="hidden text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">Marinated</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button id="quickAnchorShake1" onclick="toggleFuelItem('shake1')" class="p-2 rounded-xl border text-left flex items-center gap-2 transition-all bg-slate-900/60 border-slate-800 text-slate-300 active:scale-95">
+                            <i class="ph-fill ph-Pint-glass text-amber-400 text-base shrink-0"></i>
+                            <div class="truncate">
+                                <div class="text-[11px] font-bold leading-tight">Shake #1</div>
+                                <div class="text-[9px] text-slate-400">12:00 PM Lunch</div>
+                            </div>
+                        </button>
+                        <button id="quickAnchorShake2" onclick="toggleFuelItem('shake2')" class="p-2 rounded-xl border text-left flex items-center gap-2 transition-all bg-slate-900/60 border-slate-800 text-slate-300 active:scale-95">
+                            <i class="ph-fill ph-barbell text-emerald-400 text-base shrink-0"></i>
+                            <div class="truncate">
+                                <div class="text-[11px] font-bold leading-tight">Shake #2</div>
+                                <div class="text-[9px] text-slate-400">Gym Fuel</div>
+                            </div>
+                        </button>
+                        <button id="quickAnchorChicken" onclick="toggleFuelItem('chickenDinner')" class="p-2 rounded-xl border text-left flex items-center gap-2 transition-all bg-slate-900/60 border-slate-800 text-slate-300 active:scale-95">
+                            <i class="ph-fill ph-fire text-rose-400 text-base shrink-0"></i>
+                            <div class="truncate">
+                                <div class="text-[11px] font-bold leading-tight">AirFry Chicken</div>
+                                <div class="text-[9px] text-slate-400">6:30 PM Dinner</div>
+                            </div>
+                        </button>
+                        <button onclick="switchTab('study')" class="p-2 rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-left flex items-center gap-2 transition-all text-indigo-200 active:scale-95">
+                            <i class="ph-fill ph-terminal-window text-indigo-400 text-base shrink-0"></i>
+                            <div class="truncate">
+                                <div class="text-[11px] font-bold leading-tight">AI Handoff</div>
+                                <div class="text-[9px] text-indigo-300">9:40 PM → 7:30 AM</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pinned Custom Modules Section (Extensible Trackers) -->
+            <div id="pinnedModulesSection" class="glass-card rounded-2xl p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="ph-fill ph-push-pin text-emerald-400 text-sm"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Pinned Custom Trackers</h3>
+                    </div>
+                    <button onclick="switchTab('modules')" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                        <i class="ph-bold ph-plus"></i>
+                        <span>Add / Edit</span>
+                    </button>
+                </div>
+                <div id="pinnedModulesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <!-- Populated dynamically by JS Plugin Registry -->
+                </div>
+            </div>
+
+            <!-- Interactive Daily Timeline -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 id="timelineHeaderTitle" class="text-sm font-bold text-white">Master Weekday Timeline</h3>
+                        <p class="text-[11px] text-slate-400">Tap any block to mark complete • Passive cooking & breaks built in</p>
+                    </div>
+                    <button onclick="resetTodayScheduleChecks()" class="text-[11px] text-slate-400 hover:text-rose-400 font-medium">Reset Checks</button>
+                </div>
+
+                <div id="routineTimelineList" class="space-y-2">
+                    <!-- Rendered dynamically from Weekday or Weekend schedule array -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 2: WORKOUT (PPL STRENGTH + TREADMILL WALKING TRACKER)             -->
+        <!-- ===================================================================== -->
+        <section id="tab-workout" class="tab-pane hidden space-y-4">
+            
+            <!-- Split Selector & Session Summary Header -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">4:00 PM – 5:00 PM Campus Gym</span>
+                        <h2 class="text-base font-bold text-white">PPL Strength & Treadmill Logger</h2>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-slate-400">Session Volume</div>
+                        <div id="workoutTotalVolume" class="font-mono text-sm font-extrabold text-emerald-400">0 kg</div>
+                    </div>
+                </div>
+
+                <!-- Split Pill Selector -->
+                <div class="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                    <button onclick="selectWorkoutSplit('push')" data-split="push" class="split-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">Push Day</button>
+                    <button onclick="selectWorkoutSplit('pull')" data-split="pull" class="split-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">Pull Day</button>
+                    <button onclick="selectWorkoutSplit('legs')" data-split="legs" class="split-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">Legs Day</button>
+                    <button onclick="selectWorkoutSplit('upper')" data-split="upper" class="split-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">Upper / Custom</button>
+                    <button onclick="selectWorkoutSplit('cardio')" data-split="cardio" class="split-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">Cardio / Rest</button>
+                </div>
+
+                <!-- Previous Session Comparison & Default Rest Duration Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-800/80 text-xs">
+                    <div id="workoutPRComparisonText" class="text-slate-400 text-[11px]">
+                        Last session volume: <span class="font-mono text-slate-200 font-semibold">No prior log</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[11px] text-slate-400">Auto-Rest:</span>
+                        <button onclick="setDefaultRestSeconds(60)" data-rest="60" class="rest-preset-btn px-2 py-0.5 rounded-lg font-mono text-[11px] border">60s</button>
+                        <button onclick="setDefaultRestSeconds(90)" data-rest="90" class="rest-preset-btn px-2 py-0.5 rounded-lg font-mono text-[11px] border">90s</button>
+                        <button onclick="setDefaultRestSeconds(120)" data-rest="120" class="rest-preset-btn px-2 py-0.5 rounded-lg font-mono text-[11px] border">120s</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercises List Container -->
+            <div id="workoutExercisesContainer" class="space-y-3">
+                <!-- Dynamically populated with exercises and sets -->
+            </div>
+
+            <!-- Add Custom Exercise Inline Bar -->
+            <div class="glass-card rounded-2xl p-3 flex items-center gap-2">
+                <input type="text" id="newExerciseNameInput" placeholder="Add exercise (e.g., Cable Flyes, Dips)..." class="flex-1 bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                <button onclick="addCustomExerciseToToday()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shrink-0 flex items-center gap-1 active:scale-95">
+                    <i class="ph-bold ph-plus"></i>
+                    <span>Add Lift</span>
+                </button>
+            </div>
+
+            <!-- Treadmill Incline Walk Tracker -->
+            <div class="glass-card rounded-2xl p-4 space-y-3 border border-emerald-500/20">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                            <i class="ph-bold ph-person-simple-walk text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Treadmill Post-Lift Walk</h3>
+                            <p class="text-[11px] text-slate-400">Auto-calculates distance & ACSM incline calories</p>
+                        </div>
+                    </div>
+                    <button id="treadmillDoneBtn" onclick="toggleTreadmillDone()" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">
+                        Mark Done
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
+                        <label class="text-[10px] text-slate-400 block">Duration (min)</label>
+                        <input type="number" id="treadmillMins" oninput="updateTreadmillStats()" step="1" min="0" max="180" class="w-full bg-transparent font-mono text-sm font-bold text-white focus:outline-none mt-0.5" value="20">
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
+                        <label class="text-[10px] text-slate-400 block">Incline (%)</label>
+                        <input type="number" id="treadmillIncline" oninput="updateTreadmillStats()" step="0.5" min="0" max="20" class="w-full bg-transparent font-mono text-sm font-bold text-emerald-400 focus:outline-none mt-0.5" value="8">
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
+                        <label class="text-[10px] text-slate-400 block">Speed (km/h)</label>
+                        <input type="number" id="treadmillSpeed" oninput="updateTreadmillStats()" step="0.1" min="1" max="20" class="w-full bg-transparent font-mono text-sm font-bold text-indigo-300 focus:outline-none mt-0.5" value="5.0">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-900/60 rounded-xl px-3 py-2 border border-slate-800/80 text-xs">
+                    <div>Est. Distance: <span id="treadmillDistanceOut" class="font-mono font-bold text-white">1.67 km</span></div>
+                    <div>Est. Burn: <span id="treadmillCaloriesOut" class="font-mono font-bold text-amber-400">~168 kcal</span></div>
+                </div>
+            </div>
+
+            <!-- Save Workout Session & History Log -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Workout History Log</h3>
+                        <p class="text-[11px] text-slate-400">Snapshot today's session to compare PRs over time</p>
+                    </div>
+                    <button onclick="saveWorkoutSnapshot()" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-95">
+                        <i class="ph-bold ph-floppy-disk"></i>
+                        <span>Log Session</span>
+                    </button>
+                </div>
+
+                <div id="workoutHistoryList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 3: AI STUDY (9:40 PM -> 7:30 AM HANDOFF & MARKDOWN EXPORT)        -->
+        <!-- ===================================================================== -->
+        <section id="tab-study" class="tab-pane hidden space-y-4">
+            
+            <!-- Header Banner & 1-Click Copy Button -->
+            <div class="glass-card rounded-2xl p-4 flex items-center justify-between gap-3 active-glow-indigo">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Class-to-Portfolio Engine</span>
+                    <h2 class="text-base font-bold text-white">9:40 PM → 7:30 AM Handoff Loop</h2>
+                    <p class="text-xs text-slate-300 mt-0.5">Stage docs & schemas at night so you code within 60s at 7:30 AM.</p>
+                </div>
+                <button onclick="copyStudyLogMarkdown()" class="shrink-0 px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-indigo-500/25 active:scale-95">
+                    <i class="ph-bold ph-markdown-logo text-base"></i>
+                    <span>Copy STUDY_LOG.md</span>
+                </button>
+            </div>
+
+            <!-- 9:40 PM – 10:10 PM: Evening Context Load -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-300">
+                            <i class="ph-fill ph-moon-stars text-base"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">9:40 PM – 10:10 PM: Evening Context Load</h3>
+                            <p class="text-[11px] text-slate-400">15m Docs • 10m Stage IDE • 5m Define 7:31 AM First Action</p>
+                        </div>
+                    </div>
+                    <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800 text-indigo-300">30 min</span>
+                </div>
+
+                <div class="space-y-2.5">
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">1. Docs / Papers / Library Read (15m)</label>
+                        <input type="text" id="studyDocsInput" oninput="saveStudyField('docs', this.value)" placeholder="e.g., Qdrant AsyncClient / Sentence-Transformers CrossEncoder" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Key Engineering Takeaway / Gotcha</label>
+                        <textarea id="studyTakeawayInput" rows="2" oninput="saveStudyField('takeaway', this.value)" placeholder="e.g., CrossEncoder.predict() is CPU blocking—wrap in run_in_threadpool inside async FastAPI endpoint." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-300 block mb-1">2. Target Branch & File Path (10m)</label>
+                            <input type="text" id="studyBranchInput" oninput="saveStudyField('branch', this.value)" placeholder="feat/reranker -> src/services/rerank.py" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 font-mono text-xs text-emerald-300 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-300 block mb-1">Pydantic Schemas Needed</label>
+                            <input type="text" id="studySchemasInput" oninput="saveStudyField('schemas', this.value)" placeholder="RerankRequest -> RerankResponse" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 font-mono text-xs text-amber-300 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] font-semibold text-emerald-400 block mb-1">3. 7:31 AM First Action (Start coding within 60s)</label>
+                        <input type="text" id="studyFirstActionInput" oninput="saveStudyField('firstAction', this.value)" placeholder="Write RerankRequest schema in src/schemas/rag.py and implement async def rerank_docs()" class="w-full bg-slate-900/90 border border-emerald-500/40 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7:30 AM – 9:30 AM: Morning Deep Build -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300">
+                            <i class="ph-fill ph-sun-horizon text-base"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">7:30 AM – 9:30 AM: Morning Deep Build</h3>
+                            <p class="text-[11px] text-slate-400">Deconstruct class concepts into modular production Python</p>
+                        </div>
+                    </div>
+                    <span class="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800 text-amber-300">2.0 hrs</span>
+                </div>
+
+                <!-- 3 Production Checkboxes -->
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer">
+                        <input type="checkbox" id="studyCheckCore" onchange="saveStudyField('checkCore', this.checked)" class="w-4 h-4 rounded accent-emerald-500">
+                        <span class="text-xs text-slate-200 font-medium"><strong>7:30–8:30 AM:</strong> Built core module from scratch (without copying `.ipynb`)</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer">
+                        <input type="checkbox" id="studyCheckProd" onchange="saveStudyField('checkProd', this.checked)" class="w-4 h-4 rounded accent-emerald-500">
+                        <span class="text-xs text-slate-200 font-medium"><strong>8:30–9:20 AM:</strong> Productionized (`async/await`, Pydantic validation, error handling)</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer">
+                        <input type="checkbox" id="studyCheckCommit" onchange="saveStudyField('checkCommit', this.checked)" class="w-4 h-4 rounded accent-emerald-500">
+                        <span class="text-xs text-slate-200 font-medium"><strong>9:20–9:30 AM:</strong> Pushed Git commit & logged tonight's unfinished hook</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Git Commit Message</label>
+                        <input type="text" id="studyCommitMsgInput" oninput="saveStudyField('commitMsg', this.value)" placeholder="feat(rag): add async cross-encoder reranker" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 font-mono text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Broken / Unfinished Hook for 9:40 PM</label>
+                        <input type="text" id="studyHookInput" oninput="saveStudyField('unfinishedHook', this.value)" placeholder="Normalize logit scores 0-1 with sigmoid tonight" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekend Portfolio Benchmark Delta Calculator -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Weekend README Metric Benchmark</h3>
+                        <p class="text-[11px] text-slate-400">Quantify latency & accuracy trade-offs for your GitHub portfolio</p>
+                    </div>
+                    <span id="benchmarkDeltaSummary" class="font-mono text-xs font-bold text-emerald-400">+19% Prec | +170ms</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
+                        <label class="text-[10px] text-slate-400 block">Base Precision (%)</label>
+                        <input type="number" id="benchBasePrec" oninput="updateStudyBenchmarks()" class="w-full bg-transparent font-mono text-sm font-bold text-slate-200 focus:outline-none mt-0.5" value="62">
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
+                        <label class="text-[10px] text-slate-400 block">New Precision (%)</label>
+                        <input type="number" id="benchNewPrec" oninput="updateStudyBenchmarks()" class="w-full bg-transparent font-mono text-sm font-bold text-emerald-400 focus:outline-none mt-0.5" value="81">
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
+                        <label class="text-[10px] text-slate-400 block">Base Latency (ms)</label>
+                        <input type="number" id="benchBaseLat" oninput="updateStudyBenchmarks()" class="w-full bg-transparent font-mono text-sm font-bold text-slate-200 focus:outline-none mt-0.5" value="410">
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-2.5">
+                        <label class="text-[10px] text-slate-400 block">New Latency (ms)</label>
+                        <input type="number" id="benchNewLat" oninput="updateStudyBenchmarks()" class="w-full bg-transparent font-mono text-sm font-bold text-amber-400 focus:outline-none mt-0.5" value="580">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 4: KITCHEN & NUTRITION (FUEL, HYDRATION & 15-MIN RESET TIMER)     -->
+        <!-- ===================================================================== -->
+        <section id="tab-kitchen" class="tab-pane hidden space-y-4">
+            
+            <!-- Interactive 15-Minute Kitchen Reset Timer (9:00 PM – 9:15 PM) -->
+            <div class="glass-card rounded-2xl p-4 space-y-4 active-glow-emerald">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">9:00 PM – 9:15 PM Zero-Friction Chore Block</span>
+                        <h2 class="text-base font-bold text-white">15-Min Kitchen Reset & Marination</h2>
+                        <p class="text-xs text-slate-300">Soak first → Marinate raw chicken second → Wash once at the end</p>
+                    </div>
+                    <!-- 2-Night Batch Marinade Toggle -->
+                    <button id="twoNightBatchBtn" onclick="toggleTwoNightBatch()" class="shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all flex items-center gap-1">
+                        <i class="ph-bold ph-Snowflake"></i>
+                        <span>2-Night Batch</span>
+                    </button>
+                </div>
+
+                <!-- Big Countdown Display & Controls -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-16 h-16 flex items-center justify-center shrink-0">
+                            <svg class="w-16 h-16 -rotate-90 transform" viewBox="0 0 36 36">
+                                <path class="text-slate-800" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path id="kitchenTimerCircle" class="text-emerald-400 transition-all duration-300" stroke-dasharray="100, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            </svg>
+                            <i class="ph-duotone ph-cooking-pot text-2xl text-emerald-400 absolute"></i>
+                        </div>
+                        <div>
+                            <div id="kitchenTimerDisplay" class="font-mono text-3xl font-extrabold text-white tracking-tight">15:00</div>
+                            <div id="kitchenActiveStepBanner" class="text-xs font-medium text-emerald-400">Ready: Press Start at 9:00 PM</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <button id="kitchenTimerStartBtn" onclick="toggleKitchenResetTimer()" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-95">
+                            <i id="kitchenTimerPlayIcon" class="ph-fill ph-play"></i>
+                            <span id="kitchenTimerPlayText">Start 15m Reset</span>
+                        </button>
+                        <button onclick="resetKitchenTimer()" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 active:scale-95">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5-Step Guided Sequence Checklist -->
+                <div id="kitchenStepsList" class="space-y-2">
+                    <!-- Populated dynamically with time bracket highlighting -->
+                </div>
+            </div>
+
+            <!-- 5:55 PM Passive Air Fryer Timer + Daily Fuel Checklists -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Daily Nutrition & Fuel Checklists -->
+                <div class="glass-card rounded-2xl p-4 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-white">Daily High-Protein Fuel</h3>
+                        <button id="shake2TimingToggle" onclick="cycleShake2Timing()" class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                            Shake #2: 3:15 PM Pre
+                        </button>
+                    </div>
+
+                    <div id="nutritionChecklistContainer" class="space-y-1.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Hydration + 5:55 PM Air Fryer 25-Min Cook Timer -->
+                <div class="space-y-3">
+                    <!-- 5:55 PM Air Fryer Passive Cook Timer -->
+                    <div class="glass-card rounded-2xl p-3.5 space-y-2 border border-rose-500/25">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="ph-fill ph-fire text-rose-400 text-lg"></i>
+                                <div>
+                                    <h3 class="text-xs font-bold text-white">5:55 PM Air Fryer Timer</h3>
+                                    <p class="text-[10px] text-slate-400">Cooks while you do Work Block 3</p>
+                                </div>
+                            </div>
+                            <span id="airFryerTimerDisplay" class="font-mono text-base font-extrabold text-rose-400">25:00</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="airFryerStartBtn" onclick="toggleAirFryerTimer()" class="flex-1 py-1.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold active:scale-95">
+                                Start 25m Cook
+                            </button>
+                            <button onclick="resetAirFryerTimer()" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Hydration Tracker (8 x 500ml = 4.0L) -->
+                    <div class="glass-card rounded-2xl p-3.5 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-xs font-bold text-white">Hydration (3.5L – 4.0L)</h3>
+                                <p class="text-[10px] text-slate-400">Tap glasses (500ml each)</p>
+                            </div>
+                            <span id="hydrationLitersBadge" class="font-mono text-xs font-bold text-sky-400">0.0 / 4.0 L</span>
+                        </div>
+                        <div id="hydrationGlassesGrid" class="grid grid-cols-8 gap-1">
+                            <!-- 8 Tappable 500ml glasses -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Fast Curd-Based Air Fryer Chicken Marinade Variations -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white">1-Container Air Fryer Chicken Marinades</h3>
+                        <p class="text-[11px] text-slate-400">Mix directly in storage container with a fork at 9:04 PM</p>
+                    </div>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">200°C • 22–25m</span>
+                </div>
+
+                <!-- 4 Marinade Pill Tabs -->
+                <div class="flex gap-1.5 overflow-x-auto pb-1">
+                    <button onclick="selectMarinade('tandoori')" data-marinade="tandoori" class="marinade-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">🔥 Tandoori Kashmiri</button>
+                    <button onclick="selectMarinade('lemon')" data-marinade="lemon" class="marinade-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">🍋 Lemon Pepper Garlic</button>
+                    <button onclick="selectMarinade('periperi')" data-marinade="periperi" class="marinade-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">🌶️ Peri-Peri Herb</button>
+                    <button onclick="selectMarinade('hariyali')" data-marinade="hariyali" class="marinade-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all">🌿 Mint Hariyali</button>
+                </div>
+
+                <div id="marinadeRecipeCard" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 5: MODULES (EXTENSIBLE TRACKER BUILDER & JSON DATA BACKUP)        -->
+        <!-- ===================================================================== -->
+        <section id="tab-modules" class="tab-pane hidden space-y-4">
+            
+            <!-- Create New Custom Tracker Form -->
+            <div class="glass-card rounded-2xl p-4 space-y-3.5 active-glow-indigo">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Extensible Plugin Registry</span>
+                    <h2 class="text-base font-bold text-white">Create Custom Tracker Module</h2>
+                    <p class="text-xs text-slate-300">Add new habits, supplements, or metrics anytime without touching code.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Tracker Name</label>
+                        <input type="text" id="modNameInput" placeholder="e.g., Creatine 5g, Mobility 10m, Steps" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Tracker Type</label>
+                        <select id="modTypeSelect" onchange="onModTypeChange()" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                            <option value="checkbox">Checkbox (Done / Not Done)</option>
+                            <option value="counter">Counter (+1 / -1 with Daily Target)</option>
+                            <option value="numeric">Numeric Value (Weight, Hours, Steps, kcal)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Icon</label>
+                        <select id="modIconSelect" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none">
+                            <option value="ph-pill">💊 Supplement</option>
+                            <option value="ph-pencil-line">✏️ Doodle/Art</option>
+                            <option value="ph-footprints">👟 Steps/Walk</option>
+                            <option value="ph-bed">😴 Sleep</option>
+                            <option value="ph-book-open">📚 Reading</option>
+                            <option value="ph-scales">⚖️ Bodyweight</option>
+                            <option value="ph-brain">🧠 Deep Focus</option>
+                            <option value="ph-washing-machine">🧺 Chores</option>
+                        </select>
+                    </div>
+
+                    <div id="modTargetWrap">
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Daily Target</label>
+                        <input type="number" id="modTargetInput" value="1" step="any" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 font-mono text-xs text-white focus:outline-none">
+                    </div>
+
+                    <div id="modUnitWrap">
+                        <label class="text-[11px] font-semibold text-slate-300 block mb-1">Unit (optional)</label>
+                        <input type="text" id="modUnitInput" placeholder="g, mins, hrs, kg" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="modPinCheckbox" checked class="w-4 h-4 rounded accent-emerald-500">
+                        <span class="text-xs text-slate-200 font-medium">Pin to Tab 1 (Routine Dashboard)</span>
+                    </label>
+
+                    <button onclick="createCustomTrackerModule()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-95">
+                        <i class="ph-bold ph-plus-circle text-sm"></i>
+                        <span>Add Module</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Custom Trackers Registry List -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Installed Custom Trackers</h3>
+                        <p class="text-[11px] text-slate-400">Log today's values, toggle Routine pinning, or remove modules</p>
+                    </div>
+                    <span id="installedModulesCount" class="font-mono text-xs text-indigo-300">3 active</span>
+                </div>
+
+                <div id="allCustomModulesList" class="space-y-2.5">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Data Portability (Export / Import JSON Backup for iPhone Safari) -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div>
+                    <h3 class="text-sm font-bold text-white">iPhone Data Backup & Restore</h3>
+                    <p class="text-[11px] text-slate-400">All data lives locally on your iPhone. Export a JSON snapshot anytime.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="exportFullDataJSON()" class="flex-1 py-2.5 px-3 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95">
+                        <i class="ph-bold ph-export text-base"></i>
+                        <span>Copy Backup JSON</span>
+                    </button>
+                    <button onclick="downloadBackupFile()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95">
+                        <i class="ph-bold ph-download-simple text-base"></i>
+                        <span>Download .JSON</span>
+                    </button>
+                </div>
+
+                <div class="pt-2 border-t border-slate-800 space-y-2">
+                    <label class="text-[11px] font-semibold text-slate-300 block">Restore from JSON Backup</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="importJsonInput" placeholder="Paste exported JSON string here..." class="flex-1 bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 font-mono text-xs text-white placeholder-slate-500 focus:outline-none">
+                        <button onclick="importFullDataJSON()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shrink-0 active:scale-95">
+                            Restore
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- BOTTOM iOS GLASSMORPHIC 5-TAB NAVIGATION BAR                          -->
+    <!-- ===================================================================== -->
+    <nav class="glass-tabbar fixed bottom-0 inset-x-0 z-40 pb-tabbar pt-2 px-2">
+        <div class="max-w-xl mx-auto grid grid-cols-5 gap-1">
+            <button onclick="switchTab('routine')" data-tab="routine" class="nav-tab-btn flex flex-col items-center justify-center py-1 rounded-xl transition-all text-emerald-400">
+                <i class="ph-fill ph-calendar-check text-xl"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Routine</span>
+            </button>
+            <button onclick="switchTab('workout')" data-tab="workout" class="nav-tab-btn flex flex-col items-center justify-center py-1 rounded-xl transition-all text-slate-400">
+                <i class="ph-bold ph-barbell text-xl"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Workout</span>
+            </button>
+            <button onclick="switchTab('study')" data-tab="study" class="nav-tab-btn flex flex-col items-center justify-center py-1 rounded-xl transition-all text-slate-400">
+                <i class="ph-bold ph-terminal-window text-xl"></i>
+                <span class="text-[10px] font-semibold mt-0.5">AI Study</span>
+            </button>
+            <button onclick="switchTab('kitchen')" data-tab="kitchen" class="nav-tab-btn flex flex-col items-center justify-center py-1 rounded-xl transition-all text-slate-400">
+                <i class="ph-bold ph-cooking-pot text-xl"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Kitchen</span>
+            </button>
+            <button onclick="switchTab('modules')" data-tab="modules" class="nav-tab-btn flex flex-col items-center justify-center py-1 rounded-xl transition-all text-slate-400">
+                <i class="ph-bold ph-squares-four text-xl"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Modules</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- iOS HOME SCREEN INSTALL MODAL & TOAST NOTIFICATION                    -->
+    <!-- ===================================================================== -->
+    <div id="iosInstallModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-card max-w-sm w-full rounded-3xl p-5 border border-slate-700 space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+                        <i class="ph-bold ph-apple-logo text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Use as Native iPhone App</h3>
+                        <p class="text-[11px] text-slate-400">No App Store required • Full offline storage</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('iosInstallModal')" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+
+            <div class="space-y-2.5 text-xs text-slate-300 bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800">
+                <div class="flex items-start gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                    <p>Open this file/URL in <strong>Safari</strong> on your iPhone.</p>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                    <p>Tap the <strong>Share</strong> button <i class="ph-bold ph-export text-indigo-400"></i> at the bottom of Safari.</p>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                    <p>Scroll down and tap <strong>"Add to Home Screen"</strong>. Launch RoutineOS from your Home Screen for full-screen Dynamic Island mode.</p>
+                </div>
+            </div>
+
+            <button onclick="closeModal('iosInstallModal')" class="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs active:scale-95">
+                Got It
+            </button>
+        </div>
+    </div>
+
+    <!-- Non-blocking Toast Notification -->
+    <div id="toastBanner" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
+        <div class="glass-card px-4 py-2.5 rounded-2xl border border-emerald-500/50 shadow-2xl flex items-center gap-2 text-xs font-semibold text-white">
+            <i id="toastIcon" class="ph-fill ph-check-circle text-emerald-400 text-base"></i>
+            <span id="toastMessage">Saved!</span>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- APPLICATION LOGIC & STATE ENGINE                                      -->
+    <!-- ===================================================================== -->
+    <script>
+        const WEEKDAY_SCHEDULE = [
+            { id: 'wd_1', start: '07:00', end: '07:30', duration: '30m', title: 'Wake Up, Hydrate & Boiled Eggs', desc: 'Hydrate, brush, black coffee + 2 boiled eggs so you never study on empty.', category: 'fuel', actionTab: 'kitchen' },
+            { id: 'wd_2', start: '07:30', end: '09:30', duration: '2.0h', title: 'AI Study Block 1 (Deep Focus)', desc: 'Execute your 7:31 AM first action. Build modular Python & RAG systems without .ipynb.', category: 'study', actionTab: 'study' },
+            { id: 'wd_3', start: '09:30', end: '12:00', duration: '2.5h', title: 'Work Block 1 (WFH Sprint)', desc: 'Front-load 2.5 hrs of deep backend work. 5m stretch break at 10:45 AM.', category: 'work', workKey: 'b1', workHrs: 2.5 },
+            { id: 'wd_4', start: '12:00', end: '13:00', duration: '1.0h', title: 'Lunch (Shake #1 + Sides) & Commute', desc: '12:00–12:20: Blend Shake #1 + curd. 12:20–1:00: Commute to office & swipe in.', category: 'fuel', actionTab: 'kitchen' },
+            { id: 'wd_5', start: '13:00', end: '16:00', duration: '3.0h', title: 'Work Block 2 (Office Sprint)', desc: '3 solid hours of desk work (5.5 / 6.0h done). Optional pre-workout Shake #2 at 3:15 PM.', category: 'work', workKey: 'b2', workHrs: 3.0 },
+            { id: 'wd_6', start: '16:00', end: '17:00', duration: '1.0h', title: 'Gym Session (PPL + Treadmill)', desc: 'Campus/nearby gym: heavy compound lifts + post-lift incline treadmill walk.', category: 'gym', actionTab: 'workout' },
+            { id: 'wd_7', start: '17:00', end: '17:30', duration: '30m', title: 'Commute Home', desc: 'Ride back home and decompress.', category: 'transit' },
+            { id: 'wd_8', start: '17:30', end: '18:00', duration: '30m', title: 'Post-Gym Reset, Shake #2 & 5:55 PM Air Fryer Drop', desc: '5:30: Drink Shake #2 & toss laundry. 5:40: Shower. 5:55: Drop marinated chicken in air fryer.', category: 'fuel', actionTab: 'kitchen' },
+            { id: 'wd_9', start: '18:00', end: '18:30', duration: '30m', title: 'Work Block 3 (WFH + Passive Air Fryer Cook)', desc: 'Knock out final 30 mins of work while air fryer cooks dinner passively (6.0 / 6.0h done!).', category: 'work', workKey: 'b3', workHrs: 0.5 },
+            { id: 'wd_10', start: '18:30', end: '19:00', duration: '30m', title: 'Dinner (Air Fryer Chicken & Potatoes)', desc: 'Eat dinner hot off the parchment liner and set up desk for 7:00 PM calls.', category: 'fuel', actionTab: 'kitchen' },
+            { id: 'wd_11', start: '19:00', end: '21:00', duration: '2.0h', title: 'Work Meetings (Non-Negotiable)', desc: 'Evening syncs & team calls. Full workday complete at 9:00 PM.', category: 'meeting' },
+            { id: 'wd_12', start: '21:00', end: '21:40', duration: '40m', title: '15-Min Kitchen Reset, Marinate Chicken & Laundry', desc: 'Run the 15m Kitchen Timer (Soak -> Liner toss -> Marinate -> Wash -> Stage) + hang laundry.', category: 'chore', actionTab: 'kitchen' },
+            { id: 'wd_13', start: '21:40', end: '22:10', duration: '30m', title: 'AI Study Block 2 (Evening Context Load)', desc: 'Read docs, stage VS Code branch & write your 7:31 AM first action in the AI Study tab.', category: 'study', actionTab: 'study' },
+            { id: 'wd_14', start: '22:10', end: '23:00', duration: '50m', title: 'Doodle, Unwind & Lights Out by 11:00 PM', desc: '30m creative sketching/doodling & wind-down for 8 full hours of sleep.', category: 'unwind' }
+        ];
+
+        const WEEKEND_SCHEDULE = [
+            { id: 'we_1', start: '07:00', end: '08:00', duration: '1.0h', title: 'Slow Wake-Up, Hydrate & Boiled Eggs', desc: 'Relaxed morning pace, black coffee & morning eggs.', category: 'fuel', actionTab: 'kitchen' },
+            { id: 'we_2', start: '08:00', end: '10:00', duration: '2.0h', title: 'AI Project Sprint 1 (Architecture & Core Build)', desc: 'Phone in another room. Wire async Python logic, vector DBs, or RAG pipelines.', category: 'study', actionTab: 'study' },
+            { id: 'we_3', start: '10:00', end: '10:20', duration: '20m', title: 'Screen Blackout Reset', desc: 'Step onto balcony, hydrate, mobility stretch—zero social media scrolling.', category: 'unwind' },
+            { id: 'we_4', start: '10:20', end: '12:00', duration: '1h 40m', title: 'AI Project Sprint 2 (Benchmarks & Git Release)', desc: 'Run before/after latency & precision benchmarks, update README, and push PR.', category: 'study', actionTab: 'study' },
+            { id: 'we_5', start: '12:00', end: '13:00', duration: '1.0h', title: 'Lunch (Shake #1 + Sides)', desc: 'Blend Shake #1 + curd/eggs and rinse blender jar immediately.', category: 'fuel', actionTab: 'kitchen' },
+            { id: 'we_6', start: '13:00', end: '16:00', duration: '3.0h', title: 'Afternoon Flex, Errands & Recovery', desc: 'Sat: Power nap / ride / downtime. Sun: Chicken & grocery restock + weekly laundry.', category: 'unwind' },
+            { id: 'we_7', start: '16:00', end: '17:15', duration: '1h 15m', title: 'Gym Session (Unhurried PPL + Treadmill)', desc: 'Full hypertrophy lift + incline walk + Shake #2.', category: 'gym', actionTab: 'workout' },
+            { id: 'we_8', start: '17:15', end: '17:45', duration: '30m', title: 'Commute Home & Shower', desc: 'Head back and freshen up.', category: 'transit' },
+            { id: 'we_9', start: '17:45', end: '18:30', duration: '45m', title: 'Weekly Bulk Prep & Air Fryer Cook', desc: 'Sun: Pre-portion 5 dry oats cups & batch-marinate Mon/Tue chicken while dinner cooks.', category: 'chore', actionTab: 'kitchen' },
+            { id: 'we_10', start: '18:30', end: '19:30', duration: '1.0h', title: 'Dinner (Air Fryer Chicken) & Screen Break', desc: 'Eat dinner and take a walk or doodle before the 8:00 PM live session.', category: 'fuel', actionTab: 'kitchen' },
+            { id: 'we_11', start: '19:30', end: '20:00', duration: '30m', title: 'Live AI Class IDE Setup', desc: 'Open environment, review notes, and prepare questions.', category: 'study', actionTab: 'study' },
+            { id: 'we_12', start: '20:00', end: '22:00', duration: '2.0h', title: 'Live AI Engineering Cohort Class', desc: 'Attend live session, capture architectural trade-offs for Monday morning.', category: 'study', actionTab: 'study' },
+            { id: 'we_13', start: '22:00', end: '23:00', duration: '1.0h', title: '10-Min Kitchen Rinse, Doodle & Sleep', desc: 'Stage egg boiler for tomorrow, doodle for 30m, lights out at 11:00 PM.', category: 'unwind' }
+        ];
+
+        const DEFAULT_WORKOUT_TEMPLATES = {
+            push: [
+                { name: 'Barbell / DB Bench Press', sets: [{ weight: 60, reps: 8, rpe: 8, done: false }, { weight: 60, reps: 8, rpe: 8.5, done: false }, { weight: 60, reps: 8, rpe: 9, done: false }] },
+                { name: 'Incline Dumbbell Press', sets: [{ weight: 22.5, reps: 10, rpe: 8, done: false }, { weight: 22.5, reps: 10, rpe: 8.5, done: false }, { weight: 22.5, reps: 9, rpe: 9, done: false }] },
+                { name: 'Overhead Shoulder Press', sets: [{ weight: 40, reps: 8, rpe: 8, done: false }, { weight: 40, reps: 8, rpe: 8.5, done: false }, { weight: 40, reps: 8, rpe: 9, done: false }] },
+                { name: 'Cable / DB Lateral Raises', sets: [{ weight: 10, reps: 15, rpe: 8.5, done: false }, { weight: 10, reps: 15, rpe: 9, done: false }, { weight: 10, reps: 12, rpe: 9.5, done: false }] },
+                { name: 'Rope Tricep Pushdowns', sets: [{ weight: 25, reps: 12, rpe: 8, done: false }, { weight: 25, reps: 12, rpe: 9, done: false }, { weight: 25, reps: 10, rpe: 9.5, done: false }] }
+            ],
+            pull: [
+                { name: 'Wide-Grip Lat Pulldowns', sets: [{ weight: 55, reps: 10, rpe: 8, done: false }, { weight: 55, reps: 10, rpe: 8.5, done: false }, { weight: 55, reps: 9, rpe: 9, done: false }] },
+                { name: 'Chest-Supported / Cable Rows', sets: [{ weight: 50, reps: 10, rpe: 8, done: false }, { weight: 50, reps: 10, rpe: 8.5, done: false }, { weight: 50, reps: 10, rpe: 9, done: false }] },
+                { name: 'Rope Face Pulls (Rear Delts)', sets: [{ weight: 20, reps: 15, rpe: 8, done: false }, { weight: 20, reps: 15, rpe: 8.5, done: false }, { weight: 20, reps: 15, rpe: 9, done: false }] },
+                { name: 'EZ-Bar / Barbell Bicep Curls', sets: [{ weight: 25, reps: 10, rpe: 8.5, done: false }, { weight: 25, reps: 10, rpe: 9, done: false }, { weight: 25, reps: 8, rpe: 9.5, done: false }] },
+                { name: 'Dumbbell Hammer Curls', sets: [{ weight: 12.5, reps: 12, rpe: 8.5, done: false }, { weight: 12.5, reps: 12, rpe: 9, done: false }, { weight: 12.5, reps: 10, rpe: 9.5, done: false }] }
+            ],
+            legs: [
+                { name: 'Barbell Squat / Hack Leg Press', sets: [{ weight: 80, reps: 8, rpe: 8, done: false }, { weight: 80, reps: 8, rpe: 8.5, done: false }, { weight: 80, reps: 8, rpe: 9, done: false }] },
+                { name: 'Romanian Deadlifts (RDLs)', sets: [{ weight: 70, reps: 10, rpe: 8, done: false }, { weight: 70, reps: 10, rpe: 8.5, done: false }, { weight: 70, reps: 8, rpe: 9, done: false }] },
+                { name: 'Seated Leg Extensions', sets: [{ weight: 45, reps: 12, rpe: 8.5, done: false }, { weight: 45, reps: 12, rpe: 9, done: false }, { weight: 45, reps: 12, rpe: 9.5, done: false }] },
+                { name: 'Seated / Lying Hamstring Curls', sets: [{ weight: 40, reps: 12, rpe: 8.5, done: false }, { weight: 40, reps: 12, rpe: 9, done: false }, { weight: 40, reps: 10, rpe: 9.5, done: false }] },
+                { name: 'Standing Calf Raises', sets: [{ weight: 60, reps: 15, rpe: 8.5, done: false }, { weight: 60, reps: 15, rpe: 9, done: false }, { weight: 60, reps: 15, rpe: 9.5, done: false }] }
+            ],
+            upper: [
+                { name: 'Incline Dumbbell Press', sets: [{ weight: 24, reps: 10, rpe: 8.5, done: false }, { weight: 24, reps: 10, rpe: 9, done: false }, { weight: 24, reps: 8, rpe: 9, done: false }] },
+                { name: 'Lat Pulldowns / Pull-Ups', sets: [{ weight: 60, reps: 10, rpe: 8.5, done: false }, { weight: 60, reps: 9, rpe: 9, done: false }, { weight: 60, reps: 8, rpe: 9, done: false }] },
+                { name: 'Seated Cable Row', sets: [{ weight: 55, reps: 10, rpe: 8.5, done: false }, { weight: 55, reps: 10, rpe: 9, done: false }] },
+                { name: 'Dumbbell Lateral Raises', sets: [{ weight: 10, reps: 15, rpe: 9, done: false }, { weight: 10, reps: 15, rpe: 9, done: false }, { weight: 10, reps: 12, rpe: 9.5, done: false }] }
+            ],
+            cardio: []
+        };
+
+        const KITCHEN_RESET_STEPS = [
+            { id: 'kr_1', minStart: 0, minEnd: 2, label: 'Min 0–2: Hot-Soak Blender & Shaker', sub: 'Fill halfway with warm water + 2 drops soap, shake 5s, leave on counter.' },
+            { id: 'kr_2', minStart: 2, minEnd: 4, label: 'Min 2–4: Air Fryer Basket Reset', sub: 'Toss used parchment liner in trash, 10s soapy sponge rinse, air dry.' },
+            { id: 'kr_3', minStart: 4, minEnd: 9, label: 'Min 4–9: Marinate Tomorrow’s Chicken in Container', sub: 'Add raw chicken + 1.5 tbsp curd + spices directly in box, mix with fork, refrigerate.' },
+            { id: 'kr_4', minStart: 9, minEnd: 13, label: 'Min 9–13: Single-Batch Dish Wash & Counter Wipe', sub: 'Rinse soaked blender/shaker, wash dinner plate & fork, 20s counter wipe.' },
+            { id: 'kr_5', minStart: 13, minEnd: 15, label: 'Min 13–15: Stage Egg Boiler & Dry Oats Shake Cup', sub: 'Load eggs + water for 7:00 AM and set dry blender + oats out for 12:00 PM.' }
+        ];
+
+        const NUTRITION_ITEMS = [
+            { key: 'morningEggs', title: '7:00 AM Boiled Eggs + Hydration', sub: 'Pre-study brain fuel before 7:30 AM coding', macro: '~14g Protein' },
+            { key: 'shake1', title: '12:00 PM Shake #1 (Oats, Banana, Milk, Whey)', sub: 'High-energy lunch shake before office commute', macro: '~42g Protein' },
+            { key: 'curdSide', title: 'Lunch Side: Curd (Dahi) / Seeds', sub: 'Gut health & steady afternoon satiety', macro: '~8g Protein' },
+            { key: 'shake2', title: 'Gym Fuel Shake #2', sub: '3:15 PM Pre-Workout or 5:30 PM Light Post-Workout', macro: '~28g Protein' },
+            { key: 'chickenDinner', title: '6:30 PM Air Fryer Chicken + Potatoes', sub: 'Dropped on parchment liner at 5:55 PM', macro: '~55g Protein' }
+        ];
+
+        const MARINADE_RECIPES = {
+            tandoori: {
+                title: '🔥 Tandoori Kashmiri (Smoky & Vibrant)',
+                ingredients: ['250g Chicken breast / boneless thigh cubes', '1.5 tbsp Thick Curd (Dahi)', '1 tsp Ginger-Garlic paste + ½ Lemon juice', '1 tsp Kashmiri Red Chili + ½ tsp Turmeric + ½ tsp Garam Masala', '½ tsp Kasuri Methi (crushed) + Salt & Black Pepper'],
+                tip: 'Zero added oil needed—the curd locks in moisture at 200°C for 22 mins.'
+            },
+            lemon: {
+                title: '🍋 Lemon Pepper Garlic (Ultra-Light before 7 PM Calls)',
+                ingredients: ['250g Chicken breast / cubes', '1.5 tbsp Thick Curd (Dahi)', '1.5 tsp Fresh Crushed Black Pepper + 1.5 tsp Garlic Paste', 'Juice of 1 full Lemon + ½ tsp Oregano', 'Salt to taste'],
+                tip: 'Digests super clean right before your 7:00 PM – 9:00 PM meeting block.'
+            },
+            periperi: {
+                title: '🌶️ Peri-Peri Garlic Herb (2-Minute Fast Mix)',
+                ingredients: ['250g Chicken cubes + diced baby potatoes', '1.5 tbsp Thick Curd (Dahi)', '1.5 tbsp Peri-Peri seasoning blend', '1 tsp Ginger-Garlic paste + splash of vinegar or lemon', 'Salt to taste'],
+                tip: 'Toss cubed potatoes into the same container so chicken & carbs air-fry together.'
+            },
+            hariyali: {
+                title: '🌿 Hariyali Mint-Coriander (Weekend Fresh Prep)',
+                ingredients: ['250g Chicken cubes', '1.5 tbsp Thick Curd (Dahi)', '1 tbsp Green Chutney (Mint, Coriander, Green Chili)', '½ tsp Roasted Cumin (Jeera) powder + ½ tsp Chaat Masala', '1 tsp Ginger-Garlic paste + Salt'],
+                tip: 'Keep a small jar of mint-coriander paste in the fridge for instant 10-second marination.'
+            }
+        };
+
+        const DEFAULT_CUSTOM_MODULES = [
+            { id: 'mod_creatine', name: 'Creatine Monohydrate', type: 'checkbox', icon: 'ph-pill', target: 1, unit: '5g scoop', pinned: true },
+            { id: 'mod_doodle', name: 'Evening Doodle / Sketch', type: 'counter', icon: 'ph-pencil-line', target: 30, unit: 'mins', pinned: true },
+            { id: 'mod_sleep', name: 'Sleep Duration', type: 'numeric', icon: 'ph-bed', target: 8, unit: 'hrs', pinned: true }
+        ];
+
+        const STORAGE_PREFIX = 'routineOS_v1_';
+        let currentDateStr = getTodayISOString();
+        let activeTab = 'routine';
+        let selectedMarinade = 'tandoori';
+        let defaultRestDuration = 90;
+
+        // Timers runtime state
+        let restTimerInterval = null;
+        let restSecondsRemaining = 0;
+        let restTotalSeconds = 90;
+
+        let kitchenTimerInterval = null;
+        let kitchenSecondsRemaining = 15 * 60;
+        let kitchenTimerRunning = false;
+
+        let airFryerInterval = null;
+        let airFryerSecondsRemaining = 25 * 60;
+        let airFryerRunning = false;
+
+        function getTodayISOString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function isDateWeekend(dateStr) {
+            const [y, m, d] = dateStr.split('-').map(Number);
+            const dt = new Date(y, m - 1, d);
+            const day = dt.getDay();
+            return day === 0 || day === 6;
+        }
+
+        function getGlobalModules() {
+            try {
+                const raw = localStorage.getItem(STORAGE_PREFIX + 'custom_modules');
+                if (!raw) {
+                    localStorage.setItem(STORAGE_PREFIX + 'custom_modules', JSON.stringify(DEFAULT_CUSTOM_MODULES));
+                    return JSON.parse(JSON.stringify(DEFAULT_CUSTOM_MODULES));
+                }
+                return JSON.parse(raw);
+            } catch (e) {
+                return JSON.parse(JSON.stringify(DEFAULT_CUSTOM_MODULES));
+            }
+        }
+
+        function saveGlobalModules(mods) {
+            localStorage.setItem(STORAGE_PREFIX + 'custom_modules', JSON.stringify(mods));
+        }
+
+        function getWorkoutHistory() {
+            try {
+                const raw = localStorage.getItem(STORAGE_PREFIX + 'workout_history');
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveWorkoutHistory(list) {
+            localStorage.setItem(STORAGE_PREFIX + 'workout_history', JSON.stringify(list));
+        }
+
+        function createDefaultDayState(dateStr) {
+            const weekend = isDateWeekend(dateStr);
+            return {
+                date: dateStr,
+                mode: weekend ? 'weekend' : 'weekday',
+                checkedBlocks: {},
+                workSprints: { b1: false, b2: false, b3: false },
+                fuel: {
+                    morningEggs: false,
+                    shake1: false,
+                    curdSide: false,
+                    shake2: false,
+                    shake2Timing: '3:15 PM Pre',
+                    chickenDinner: false,
+                    twoNightBatch: false
+                },
+                hydrationGlasses: 0,
+                kitchenSteps: {},
+                workout: {
+                    split: 'push',
+                    exercises: JSON.parse(JSON.stringify(DEFAULT_WORKOUT_TEMPLATES.push)),
+                    treadmill: { mins: 20, incline: 8, speed: 5.0, done: false }
+                },
+                study: {
+                    docs: '',
+                    takeaway: '',
+                    branch: '',
+                    schemas: '',
+                    firstAction: '',
+                    checkCore: false,
+                    checkProd: false,
+                    checkCommit: false,
+                    commitMsg: '',
+                    unfinishedHook: '',
+                    benchBasePrec: 62,
+                    benchNewPrec: 81,
+                    benchBaseLat: 410,
+                    benchNewLat: 580
+                },
+                moduleValues: {}
+            };
+        }
+
+        function getDayState(dateStr = currentDateStr) {
+            try {
+                const key = STORAGE_PREFIX + 'day_' + dateStr;
+                const raw = localStorage.getItem(key);
+                if (!raw) {
+                    const fresh = createDefaultDayState(dateStr);
+                    localStorage.setItem(key, JSON.stringify(fresh));
+                    return fresh;
+                }
+                const parsed = JSON.parse(raw);
+                const defaults = createDefaultDayState(dateStr);
+                return {
+                    ...defaults,
+                    ...parsed,
+                    workSprints: { ...defaults.workSprints, ...(parsed.workSprints || {}) },
+                    fuel: { ...defaults.fuel, ...(parsed.fuel || {}) },
+                    workout: {
+                        ...defaults.workout,
+                        ...(parsed.workout || {}),
+                        treadmill: { ...defaults.workout.treadmill, ...(parsed.workout?.treadmill || {}) }
+                    },
+                    study: { ...defaults.study, ...(parsed.study || {}) },
+                    moduleValues: { ...(parsed.moduleValues || {}) }
+                };
+            } catch (e) {
+                return createDefaultDayState(dateStr);
+            }
+        }
+
+        function saveDayState(state, dateStr = currentDateStr) {
+            try {
+                const key = STORAGE_PREFIX + 'day_' + dateStr;
+                localStorage.setItem(key, JSON.stringify(state));
+                updateHeaderCompletionRing();
+            } catch (e) {
+                console.error('Failed saving day state:', e);
+            }
+        }
+
+        function playSubtleChime() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.18); // A5
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.45);
+            } catch (e) {
+                // Ignore if audio context not unlocked yet
+            }
+        }
+
+        let toastTimeout = null;
+        function showToast(message, iconClass = 'ph-check-circle text-emerald-400') {
+            const banner = document.getElementById('toastBanner');
+            const msgEl = document.getElementById('toastMessage');
+            const iconEl = document.getElementById('toastIcon');
+            msgEl.textContent = message;
+            iconEl.className = `ph-fill ${iconClass} text-base`;
+            banner.classList.remove('opacity-0', '-translate-y-2');
+            banner.classList.add('opacity-100', 'translate-y-0');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                banner.classList.add('opacity-0', '-translate-y-2');
+                banner.classList.remove('opacity-100', 'translate-y-0');
+            }, 2400);
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function copyTextToClipboard(text, successMsg) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg);
+            } catch (err) {
+                showToast('Copy failed', 'ph-warning text-rose-400');
+            }
+            document.body.removeChild(ta);
+        }
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-pane').forEach(el => {
+                el.classList.toggle('hidden', el.id !== `tab-${tabId}`);
+            });
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                const isTarget = btn.getAttribute('data-tab') === tabId;
+                btn.className = `nav-tab-btn flex flex-col items-center justify-center py-1 rounded-xl transition-all ${
+                    isTarget ? 'text-emerald-400 scale-105' : 'text-slate-400 hover:text-slate-200'
+                }`;
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderAll();
+        }
+
+        function changeDate(offsetDays) {
+            const [y, m, d] = currentDateStr.split('-').map(Number);
+            const dt = new Date(y, m - 1, d);
+            dt.setDate(dt.getDate() + offsetDays);
+            const ny = dt.getFullYear();
+            const nm = String(dt.getMonth() + 1).padStart(2, '0');
+            const nd = String(dt.getDate()).padStart(2, '0');
+            currentDateStr = `${ny}-${nm}-${nd}`;
+            renderAll();
+        }
+
+        function onDateInputChange(val) {
+            if (!val) return;
+            currentDateStr = val;
+            renderAll();
+        }
+
+        function jumpToToday() {
+            currentDateStr = getTodayISOString();
+            renderAll();
+            showToast('Jumped to Today');
+        }
+
+        function toggleScheduleMode() {
+            const state = getDayState();
+            state.mode = state.mode === 'weekday' ? 'weekend' : 'weekday';
+            saveDayState(state);
+            renderAll();
+            showToast(`Switched to ${state.mode === 'weekday' ? 'Weekday' : 'Weekend'} Routine`);
+        }
+
+        function parseTimeToMinutes(hhmm) {
+            const [h, m] = hhmm.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        let currentLiveActionTab = null;
+
+        function updateLiveClockAndActiveBlock() {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('liveClockBadge').textContent = `${hh}:${mm}`;
+
+            const nowMinutes = now.getHours() * 60 + now.getMinutes();
+            const state = getDayState();
+            const schedule = state.mode === 'weekend' ? WEEKEND_SCHEDULE : WEEKDAY_SCHEDULE;
+
+            let activeIdx = -1;
+            for (let i = 0; i < schedule.length; i++) {
+                const startM = parseTimeToMinutes(schedule[i].start);
+                const endM = parseTimeToMinutes(schedule[i].end);
+                if (nowMinutes >= startM && nowMinutes < endM) {
+                    activeIdx = i;
+                    break;
+                }
+            }
+
+            const rangeEl = document.getElementById('liveBlockTimeRange');
+            const titleEl = document.getElementById('liveBlockTitle');
+            const subEl = document.getElementById('liveBlockSubtitle');
+            const countEl = document.getElementById('liveBlockCountdown');
+            const elapsedEl = document.getElementById('liveBlockElapsedText');
+            const nextEl = document.getElementById('liveBlockNextText');
+            const barEl = document.getElementById('liveBlockProgressBar');
+            const actionBtn = document.getElementById('liveBlockActionBtn');
+
+            if (activeIdx !== -1) {
+                const block = schedule[activeIdx];
+                const nextBlock = schedule[activeIdx + 1] || schedule[0];
+                const startM = parseTimeToMinutes(block.start);
+                const endM = parseTimeToMinutes(block.end);
+                const totalM = Math.max(1, endM - startM);
+                const elapsedM = nowMinutes - startM;
+                const remM = endM - nowMinutes;
+                const pct = Math.min(100, Math.max(0, Math.round((elapsedM / totalM) * 100)));
+
+                rangeEl.textContent = `${block.start} – ${block.end} (${block.duration})`;
+                titleEl.textContent = block.title;
+                subEl.textContent = block.desc;
+                countEl.textContent = remM >= 60 ? `${Math.floor(remM / 60)}h ${remM % 60}m left` : `${remM}m left`;
+                elapsedEl.textContent = `Elapsed: ${elapsedM}m (${pct}%)`;
+                nextEl.textContent = `Next (${nextBlock.start}): ${nextBlock.title}`;
+                barEl.style.width = `${pct}%`;
+
+                if (block.actionTab) {
+                    currentLiveActionTab = block.actionTab;
+                    actionBtn.classList.remove('hidden');
+                } else {
+                    currentLiveActionTab = null;
+                    actionBtn.classList.add('hidden');
+                }
+            } else {
+                // Sleep window (11:00 PM - 7:00 AM)
+                rangeEl.textContent = '23:00 – 07:00 (8.0h)';
+                titleEl.textContent = 'Recovery & Deep Sleep Window';
+                subEl.textContent = 'Rest up for tomorrow’s 7:00 AM wake-up and 7:30 AM AI engineering block.';
+                countEl.textContent = 'Rest Mode';
+                elapsedEl.textContent = 'Lights Out';
+                nextEl.textContent = 'Next (07:00): Wake Up, Hydrate & Boiled Eggs';
+                barEl.style.width = '100%';
+                currentLiveActionTab = 'study';
+                actionBtn.classList.remove('hidden');
+            }
+
+            return activeIdx;
+        }
+
+        function triggerLiveBlockAction() {
+            if (currentLiveActionTab) {
+                switchTab(currentLiveActionTab);
+            }
+        }
+
+        function renderRoutineTab() {
+            const state = getDayState();
+            const schedule = state.mode === 'weekend' ? WEEKEND_SCHEDULE : WEEKDAY_SCHEDULE;
+            const activeIdx = updateLiveClockAndActiveBlock();
+
+            // Update Header Date & Mode UI
+            document.getElementById('datePickerInput').value = currentDateStr;
+            const isToday = currentDateStr === getTodayISOString();
+            const [y, m, d] = currentDateStr.split('-').map(Number);
+            const dateObj = new Date(y, m - 1, d);
+            const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById('dateFriendlyLabel').textContent = isToday ? `Today (${dayName})` : dayName;
+            document.getElementById('todayJumpBtn').classList.toggle('opacity-40', isToday);
+
+            const modeBtn = document.getElementById('scheduleModeBtn');
+            const modeIcon = document.getElementById('scheduleModeIcon');
+            const modeLabel = document.getElementById('scheduleModeLabel');
+            if (state.mode === 'weekend') {
+                modeBtn.className = 'px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition-all bg-emerald-500/15 border-emerald-500/40 text-emerald-300 active:scale-95';
+                modeIcon.className = 'ph-fill ph-rocket-launch text-sm';
+                modeLabel.textContent = 'Weekend';
+                document.getElementById('timelineHeaderTitle').textContent = 'Master Weekend Timeline (Live Class + 4h Build)';
+            } else {
+                modeBtn.className = 'px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition-all bg-indigo-500/15 border-indigo-500/40 text-indigo-300 active:scale-95';
+                modeIcon.className = 'ph-fill ph-briefcase text-sm';
+                modeLabel.textContent = 'Weekday';
+                document.getElementById('timelineHeaderTitle').textContent = 'Master Weekday Timeline (6h Work + 2.5h AI)';
+            }
+
+            // Update 6.0h Work Quota Widget
+            const w1 = state.workSprints.b1 ? 2.5 : 0;
+            const w2 = state.workSprints.b2 ? 3.0 : 0;
+            const w3 = state.workSprints.b3 ? 0.5 : 0;
+            const totalWork = w1 + w2 + w3;
+            const workPct = Math.min(100, Math.round((totalWork / 6.0) * 100));
+            document.getElementById('workHoursTotalBadge').textContent = `${totalWork.toFixed(1)} / 6.0h`;
+            document.getElementById('workHoursBar').style.width = `${workPct}%`;
+
+            const styleWorkBtn = (btnId, active) => {
+                const el = document.getElementById(btnId);
+                el.className = active
+                    ? 'py-1.5 px-2 rounded-xl border text-center transition-all bg-indigo-500/25 border-indigo-400 text-white shadow-sm active:scale-95'
+                    : 'py-1.5 px-2 rounded-xl border text-center transition-all bg-slate-900/60 border-slate-800 text-slate-400 active:scale-95';
+            };
+            styleWorkBtn('workBtn1', state.workSprints.b1);
+            styleWorkBtn('workBtn2', state.workSprints.b2);
+            styleWorkBtn('workBtn3', state.workSprints.b3);
+
+            // Quick Fuel Anchors
+            const styleAnchor = (id, done) => {
+                const el = document.getElementById(id);
+                el.className = done
+                    ? 'p-2 rounded-xl border text-left flex items-center gap-2 transition-all bg-emerald-500/20 border-emerald-500/50 text-white active:scale-95'
+                    : 'p-2 rounded-xl border text-left flex items-center gap-2 transition-all bg-slate-900/60 border-slate-800 text-slate-300 active:scale-95';
+            };
+            styleAnchor('quickAnchorShake1', state.fuel.shake1);
+            styleAnchor('quickAnchorShake2', state.fuel.shake2);
+            styleAnchor('quickAnchorChicken', state.fuel.chickenDinner);
+
+            // Check if yesterday had 2-Night Batch enabled
+            const [cy, cm, cd] = currentDateStr.split('-').map(Number);
+            const prevDt = new Date(cy, cm - 1, cd - 1);
+            const prevStr = `${prevDt.getFullYear()}-${String(prevDt.getMonth() + 1).padStart(2, '0')}-${String(prevDt.getDate()).padStart(2, '0')}`;
+            const prevState = getDayState(prevStr);
+            const preMarinated = prevState.fuel?.twoNightBatch || state.fuel?.twoNightBatch;
+            document.getElementById('TomorrowChickenPrepBadge').classList.toggle('hidden', !preMarinated);
+
+            // Render Pinned Custom Modules
+            renderPinnedModulesOnRoutine(state);
+
+            // Render Schedule Timeline
+            const listEl = document.getElementById('routineTimelineList');
+            const catStyles = {
+                study: { badge: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30', icon: 'ph-terminal-window' },
+                work: { badge: 'bg-sky-500/15 text-sky-300 border-sky-500/30', icon: 'ph-laptop' },
+                fuel: { badge: 'bg-amber-500/15 text-amber-300 border-amber-500/30', icon: 'ph-bowl-food' },
+                gym: { badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30', icon: 'ph-barbell' },
+                meeting: { badge: 'bg-purple-500/15 text-purple-300 border-purple-500/30', icon: 'ph-video-camera' },
+                chore: { badge: 'bg-rose-500/15 text-rose-300 border-rose-500/30', icon: 'ph-sparkle' },
+                transit: { badge: 'bg-slate-700/40 text-slate-300 border-slate-600/40', icon: 'ph-motorcycle' },
+                unwind: { badge: 'bg-teal-500/15 text-teal-300 border-teal-500/30', icon: 'ph-moon' }
+            };
+
+            listEl.innerHTML = schedule.map((item, idx) => {
+                const isDone = !!state.checkedBlocks[item.id];
+                const isCurrent = isToday && idx === activeIdx;
+                const st = catStyles[item.category] || catStyles.unwind;
+
+                return `
+                    <div onclick="toggleScheduleBlock('${item.id}')" class="p-3 rounded-2xl border transition-all cursor-pointer flex items-start gap-3 ${
+                        isCurrent
+                            ? 'bg-slate-900/95 border-emerald-500/60 shadow-lg shadow-emerald-500/10'
+                            : isDone
+                            ? 'bg-slate-900/35 border-slate-800/60 opacity-60'
+                            : 'bg-slate-900/70 border-slate-800/90 hover:border-slate-700'
+                    }">
+                        <button type="button" class="mt-0.5 w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 transition-all ${
+                            isDone ? 'bg-emerald-500 border-emerald-400 text-slate-950' : 'border-slate-600 bg-slate-950/60'
+                        }">
+                            ${isDone ? '<i class="ph-bold ph-check text-xs"></i>' : ''}
+                        </button>
+
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center justify-between gap-1">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-mono text-[11px] font-bold ${isCurrent ? 'text-emerald-400' : 'text-slate-400'}">${item.start} – ${item.end}</span>
+                                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded border ${st.badge}">${item.duration}</span>
+                                    ${isCurrent ? '<span class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950">Now</span>' : ''}
+                                </div>
+                                ${item.actionTab ? `
+                                    <span onclick="event.stopPropagation(); switchTab('${item.actionTab}')" class="text-[10px] font-semibold text-indigo-400 hover:underline flex items-center gap-0.5">
+                                        <span>Open</span>
+                                        <i class="ph-bold ph-arrow-up-right"></i>
+                                    </span>
+                                ` : ''}
+                            </div>
+                            <h4 class="text-xs font-bold mt-1 ${isDone ? 'line-through text-slate-400' : 'text-white'}">${item.title}</h4>
+                            <p class="text-[11px] text-slate-400 leading-relaxed mt-0.5">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateHeaderCompletionRing();
+        }
+
+        function toggleScheduleBlock(blockId) {
+            const state = getDayState();
+            state.checkedBlocks[blockId] = !state.checkedBlocks[blockId];
+
+            // Sync with work sprint buttons if this schedule block corresponds to a work block
+            const schedule = state.mode === 'weekend' ? WEEKEND_SCHEDULE : WEEKDAY_SCHEDULE;
+            const found = schedule.find(b => b.id === blockId);
+            if (found && found.workKey) {
+                state.workSprints[found.workKey] = state.checkedBlocks[blockId];
+            }
+
+            saveDayState(state);
+            renderRoutineTab();
+        }
+
+        function toggleWorkSprint(key, hrs) {
+            const state = getDayState();
+            state.workSprints[key] = !state.workSprints[key];
+
+            // Also sync corresponding weekday timeline checkbox
+            const mapKeyToBlock = { b1: 'wd_3', b2: 'wd_5', b3: 'wd_9' };
+            if (mapKeyToBlock[key]) {
+                state.checkedBlocks[mapKeyToBlock[key]] = state.workSprints[key];
+            }
+
+            saveDayState(state);
+            renderRoutineTab();
+            showToast(state.workSprints[key] ? `+${hrs}h Work Block Logged` : `Work Block Unchecked`);
+        }
+
+        function resetTodayScheduleChecks() {
+            const state = getDayState();
+            state.checkedBlocks = {};
+            state.workSprints = { b1: false, b2: false, b3: false };
+            saveDayState(state);
+            renderRoutineTab();
+            showToast('Schedule checks reset for today');
+        }
+
+        function updateHeaderCompletionRing() {
+            const state = getDayState();
+            const schedule = state.mode === 'weekend' ? WEEKEND_SCHEDULE : WEEKDAY_SCHEDULE;
+            const totalItems = schedule.length;
+            const doneCount = schedule.filter(b => state.checkedBlocks[b.id]).length;
+            const pct = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
+
+            const circle = document.getElementById('headerProgressCircle');
+            const text = document.getElementById('headerProgressText');
+            if (circle && text) {
+                circle.setAttribute('stroke-dasharray', `${pct}, 100`);
+                text.textContent = `${pct}%`;
+            }
+        }
+
+        function selectWorkoutSplit(splitKey) {
+            const state = getDayState();
+            state.workout.split = splitKey;
+            if (!state.workout.exercises || state.workout.exercises.length === 0 || confirmSplitSwitch(state.workout.exercises)) {
+                state.workout.exercises = JSON.parse(JSON.stringify(DEFAULT_WORKOUT_TEMPLATES[splitKey] || []));
+            }
+            saveDayState(state);
+            renderWorkoutTab();
+            showToast(`Loaded ${splitKey.toUpperCase()} template`);
+        }
+
+        function confirmSplitSwitch(exercises) {
+            // Only overwrite automatically if no sets have been marked "done" yet today
+            const anyDone = exercises.some(ex => ex.sets && ex.sets.some(s => s.done));
+            return !anyDone;
+        }
+
+        function setDefaultRestSeconds(sec) {
+            defaultRestDuration = sec;
+            renderWorkoutTab();
+            showToast(`Auto-rest timer set to ${sec}s`);
+        }
+
+        function startRestTimer(seconds = defaultRestDuration) {
+            if (restTimerInterval) clearInterval(restTimerInterval);
+            restTotalSeconds = seconds;
+            restSecondsRemaining = seconds;
+            document.getElementById('floatingRestBar').classList.remove('hidden');
+            updateRestTimerUI();
+
+            restTimerInterval = setInterval(() => {
+                restSecondsRemaining--;
+                if (restSecondsRemaining <= 0) {
+                    stopRestTimer();
+                    playSubtleChime();
+                    showToast('Rest Complete! Time for your next set 💪', 'ph-bell-ringing text-amber-400');
+                } else {
+                    updateRestTimerUI();
+                }
+            }, 1000);
+        }
+
+        function adjustRestTimer(deltaSec) {
+            restSecondsRemaining = Math.max(5, restSecondsRemaining + deltaSec);
+            restTotalSeconds = Math.max(restTotalSeconds, restSecondsRemaining);
+            updateRestTimerUI();
+        }
+
+        function stopRestTimer() {
+            if (restTimerInterval) clearInterval(restTimerInterval);
+            restTimerInterval = null;
+            document.getElementById('floatingRestBar').classList.add('hidden');
+        }
+
+        function updateRestTimerUI() {
+            const mm = String(Math.floor(restSecondsRemaining / 60)).padStart(2, '0');
+            const ss = String(restSecondsRemaining % 60).padStart(2, '0');
+            document.getElementById('restTimerCountdown').textContent = `${mm}:${ss}`;
+            const pct = Math.min(100, Math.max(0, (restSecondsRemaining / restTotalSeconds) * 100));
+            document.getElementById('restTimerProgressBar').style.width = `${pct}%`;
+        }
+
+        function renderWorkoutTab() {
+            const state = getDayState();
+            const currentSplit = state.workout.split || 'push';
+
+            // Highlight split pills
+            document.querySelectorAll('.split-pill').forEach(btn => {
+                const isSelected = btn.getAttribute('data-split') === currentSplit;
+                btn.className = `split-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                    isSelected
+                        ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-md shadow-emerald-500/20'
+                        : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-slate-700'
+                }`;
+            });
+
+            // Highlight rest timer presets
+            document.querySelectorAll('.rest-preset-btn').forEach(btn => {
+                const isSelected = Number(btn.getAttribute('data-rest')) === defaultRestDuration;
+                btn.className = `rest-preset-btn px-2 py-0.5 rounded-lg font-mono text-[11px] border ${
+                    isSelected ? 'bg-amber-500/25 border-amber-400 text-amber-300 font-bold' : 'bg-slate-900 border-slate-800 text-slate-400'
+                }`;
+            });
+
+            // Calculate total volume & compare with history
+            let totalVolume = 0;
+            let completedSets = 0;
+            (state.workout.exercises || []).forEach(ex => {
+                (ex.sets || []).forEach(s => {
+                    if (s.done) {
+                        totalVolume += (Number(s.weight) || 0) * (Number(s.reps) || 0);
+                        completedSets++;
+                    }
+                });
+            });
+            document.getElementById('workoutTotalVolume').textContent = `${totalVolume.toLocaleString()} kg (${completedSets} sets)`;
+
+            // Compare with last logged workout of same split
+            const history = getWorkoutHistory();
+            const lastSameSplit = history.find(h => h.split === currentSplit && h.date !== currentDateStr);
+            const prEl = document.getElementById('workoutPRComparisonText');
+            if (lastSameSplit) {
+                const diff = totalVolume - lastSameSplit.volume;
+                const diffSign = diff >= 0 ? `+${diff} kg` : `${diff} kg`;
+                prEl.innerHTML = `Last ${currentSplit.toUpperCase()} (${lastSameSplit.date}): <span class="font-mono text-white font-bold">${lastSameSplit.volume} kg</span> <span class="font-mono ${diff >= 0 ? 'text-emerald-400' : 'text-amber-400'}">(${diffSign})</span>`;
+            } else {
+                prEl.innerHTML = `Last ${currentSplit.toUpperCase()} session: <span class="font-mono text-slate-300">No prior snapshot</span>`;
+            }
+
+            // Render Exercises
+            const container = document.getElementById('workoutExercisesContainer');
+            if (!state.workout.exercises || state.workout.exercises.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card rounded-2xl p-6 text-center text-slate-400 text-xs">
+                        Rest / Cardio focus selected, or no lifts added yet. Use the bar below to add any exercise!
+                    </div>
+                `;
+            } else {
+                container.innerHTML = state.workout.exercises.map((ex, exIdx) => `
+                    <div class="glass-card rounded-2xl p-3.5 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-indigo-500/20 border border-indigo-500/30 font-mono text-xs font-bold text-indigo-300 flex items-center justify-center">${exIdx + 1}</span>
+                                <h4 class="text-xs font-bold text-white">${ex.name}</h4>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="addWorkoutSet(${exIdx})" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-emerald-300 border border-slate-700">+ Set</button>
+                                <button onclick="removeExercise(${exIdx})" class="p-1 text-slate-500 hover:text-rose-400" title="Remove Exercise"><i class="ph-bold ph-trash text-xs"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <div class="grid grid-cols-12 gap-1.5 text-[10px] font-mono text-slate-400 px-1">
+                                <div class="col-span-2">SET</div>
+                                <div class="col-span-3">KG</div>
+                                <div class="col-span-3">REPS</div>
+                                <div class="col-span-2">RPE</div>
+                                <div class="col-span-2 text-right">DONE</div>
+                            </div>
+                            ${ex.sets.map((s, sIdx) => `
+                                <div class="grid grid-cols-12 gap-1.5 items-center p-1.5 rounded-xl border transition-all ${
+                                    s.done ? 'bg-emerald-500/15 border-emerald-500/40' : 'bg-slate-900/75 border-slate-800'
+                                }">
+                                    <div class="col-span-2 flex items-center gap-1">
+                                        <span class="font-mono text-xs font-bold text-slate-300 pl-1">#${sIdx + 1}</span>
+                                        ${ex.sets.length > 1 ? `<button onclick="removeWorkoutSet(${exIdx}, ${sIdx})" class="text-slate-600 hover:text-rose-400 text-[10px]">×</button>` : ''}
+                                    </div>
+                                    <div class="col-span-3">
+                                        <input type="number" step="0.5" value="${s.weight}" oninput="updateWorkoutSetField(${exIdx}, ${sIdx}, 'weight', this.value)" class="w-full bg-slate-950/70 border border-slate-700/80 rounded-lg px-2 py-1 font-mono text-xs font-bold text-white text-center focus:outline-none focus:border-indigo-400">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <input type="number" step="1" value="${s.reps}" oninput="updateWorkoutSetField(${exIdx}, ${sIdx}, 'reps', this.value)" class="w-full bg-slate-950/70 border border-slate-700/80 rounded-lg px-2 py-1 font-mono text-xs font-bold text-white text-center focus:outline-none focus:border-indigo-400">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <input type="number" step="0.5" max="10" value="${s.rpe || 8}" oninput="updateWorkoutSetField(${exIdx}, ${sIdx}, 'rpe', this.value)" class="w-full bg-slate-950/70 border border-slate-700/80 rounded-lg px-1.5 py-1 font-mono text-xs text-slate-300 text-center focus:outline-none">
+                                    </div>
+                                    <div class="col-span-2 flex justify-end">
+                                        <button onclick="toggleWorkoutSetDone(${exIdx}, ${sIdx})" class="w-8 h-7 rounded-lg flex items-center justify-center transition-all ${
+                                            s.done ? 'bg-emerald-500 text-slate-950 font-bold shadow' : 'bg-slate-800 text-slate-400 border border-slate-700'
+                                        }">
+                                            <i class="ph-bold ph-check text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Treadmill Inputs & Stats
+            const tm = state.workout.treadmill || { mins: 20, incline: 8, speed: 5.0, done: false };
+            document.getElementById('treadmillMins').value = tm.mins;
+            document.getElementById('treadmillIncline').value = tm.incline;
+            document.getElementById('treadmillSpeed').value = tm.speed;
+            const tmBtn = document.getElementById('treadmillDoneBtn');
+            tmBtn.className = tm.done
+                ? 'px-3 py-1.5 rounded-xl text-xs font-bold border bg-emerald-500 text-slate-950 border-emerald-400'
+                : 'px-3 py-1.5 rounded-xl text-xs font-bold border bg-slate-900 text-slate-300 border-slate-700';
+            tmBtn.textContent = tm.done ? '✓ Walk Logged' : 'Mark Done';
+            calculateTreadmillMetrics(tm.mins, tm.incline, tm.speed);
+
+            // Render Workout History
+            renderWorkoutHistoryList(history);
+        }
+
+        function updateWorkoutSetField(exIdx, setIdx, field, val) {
+            const state = getDayState();
+            state.workout.exercises[exIdx].sets[setIdx][field] = Number(val);
+            saveDayState(state);
+            // Update volume display live
+            let totalVolume = 0;
+            let completedSets = 0;
+            state.workout.exercises.forEach(ex => {
+                ex.sets.forEach(s => {
+                    if (s.done) {
+                        totalVolume += (Number(s.weight) || 0) * (Number(s.reps) || 0);
+                        completedSets++;
+                    }
+                });
+            });
+            document.getElementById('workoutTotalVolume').textContent = `${totalVolume.toLocaleString()} kg (${completedSets} sets)`;
+        }
+
+        function toggleWorkoutSetDone(exIdx, setIdx) {
+            const state = getDayState();
+            const setObj = state.workout.exercises[exIdx].sets[setIdx];
+            setObj.done = !setObj.done;
+            saveDayState(state);
+            renderWorkoutTab();
+            if (setObj.done) {
+                startRestTimer(defaultRestDuration);
+            }
+        }
+
+        function addWorkoutSet(exIdx) {
+            const state = getDayState();
+            const sets = state.workout.exercises[exIdx].sets;
+            const lastSet = sets[sets.length - 1] || { weight: 20, reps: 10, rpe: 8 };
+            sets.push({ weight: lastSet.weight, reps: lastSet.reps, rpe: lastSet.rpe, done: false });
+            saveDayState(state);
+            renderWorkoutTab();
+        }
+
+        function removeWorkoutSet(exIdx, setIdx) {
+            const state = getDayState();
+            state.workout.exercises[exIdx].sets.splice(setIdx, 1);
+            saveDayState(state);
+            renderWorkoutTab();
+        }
+
+        function removeExercise(exIdx) {
+            const state = getDayState();
+            state.workout.exercises.splice(exIdx, 1);
+            saveDayState(state);
+            renderWorkoutTab();
+        }
+
+        function addCustomExerciseToToday() {
+            const input = document.getElementById('newExerciseNameInput');
+            const name = input.value.trim();
+            if (!name) return;
+            const state = getDayState();
+            state.workout.exercises.push({
+                name,
+                sets: [
+                    { weight: 20, reps: 10, rpe: 8, done: false },
+                    { weight: 20, reps: 10, rpe: 8.5, done: false },
+                    { weight: 20, reps: 10, rpe: 9, done: false }
+                ]
+            });
+            input.value = '';
+            saveDayState(state);
+            renderWorkoutTab();
+            showToast(`Added ${name}`);
+        }
+
+        function updateTreadmillStats() {
+            const mins = Number(document.getElementById('treadmillMins').value) || 0;
+            const incline = Number(document.getElementById('treadmillIncline').value) || 0;
+            const speed = Number(document.getElementById('treadmillSpeed').value) || 0;
+
+            const state = getDayState();
+            state.workout.treadmill.mins = mins;
+            state.workout.treadmill.incline = incline;
+            state.workout.treadmill.speed = speed;
+            saveDayState(state);
+
+            calculateTreadmillMetrics(mins, incline, speed);
+        }
+
+        function calculateTreadmillMetrics(mins, incline, speed) {
+            const distanceKm = (speed * (mins / 60)).toFixed(2);
+            // ACSM walking VO2 equation: VO2 = 3.5 + (0.1 * speed_m_min) + (1.8 * speed_m_min * grade)
+            const speedMetersPerMin = (speed * 1000) / 60;
+            const grade = incline / 100;
+            const vo2 = 3.5 + (0.1 * speedMetersPerMin) + (1.8 * speedMetersPerMin * grade);
+            const assumedWeightKg = 76;
+            const kcalPerMin = (vo2 * assumedWeightKg) / 200;
+            const totalKcal = Math.round(kcalPerMin * mins);
+
+            document.getElementById('treadmillDistanceOut').textContent = `${distanceKm} km`;
+            document.getElementById('treadmillCaloriesOut').textContent = `~${totalKcal} kcal`;
+        }
+
+        function toggleTreadmillDone() {
+            const state = getDayState();
+            state.workout.treadmill.done = !state.workout.treadmill.done;
+            saveDayState(state);
+            renderWorkoutTab();
+            showToast(state.workout.treadmill.done ? 'Treadmill Walk Logged!' : 'Treadmill Walk Unchecked');
+        }
+
+        function saveWorkoutSnapshot() {
+            const state = getDayState();
+            let volume = 0;
+            let setsDone = 0;
+            (state.workout.exercises || []).forEach(ex => {
+                (ex.sets || []).forEach(s => {
+                    if (s.done) {
+                        volume += (Number(s.weight) || 0) * (Number(s.reps) || 0);
+                        setsDone++;
+                    }
+                });
+            });
+
+            const history = getWorkoutHistory().filter(h => h.date !== currentDateStr);
+            history.unshift({
+                date: currentDateStr,
+                split: state.workout.split,
+                volume,
+                setsDone,
+                treadmill: { ...state.workout.treadmill }
+            });
+            saveWorkoutHistory(history.slice(0, 30));
+
+            // Also mark the Gym block on the Routine tab complete
+            state.checkedBlocks[state.mode === 'weekend' ? 'we_7' : 'wd_6'] = true;
+            saveDayState(state);
+            renderWorkoutTab();
+            showToast('Workout session saved to history & Routine checked!');
+        }
+
+        function renderWorkoutHistoryList(history) {
+            const listEl = document.getElementById('workoutHistoryList');
+            if (!history || history.length === 0) {
+                listEl.innerHTML = `<div class="text-xs text-slate-500 py-2">No saved workouts yet. Tap "Log Session" after your lift!</div>`;
+                return;
+            }
+            listEl.innerHTML = history.map(item => `
+                <div class="flex items-center justify-between bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs">
+                    <div>
+                        <span class="font-mono font-bold text-emerald-400 uppercase">${item.split}</span>
+                        <span class="text-slate-400 font-mono ml-1.5">${item.date}</span>
+                    </div>
+                    <div class="font-mono text-slate-200">
+                        <strong>${item.volume.toLocaleString()} kg</strong> (${item.setsDone} sets) • ${item.treadmill?.mins || 0}m walk
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderStudyTab() {
+            const state = getDayState();
+            const st = state.study;
+
+            document.getElementById('studyDocsInput').value = st.docs || '';
+            document.getElementById('studyTakeawayInput').value = st.takeaway || '';
+            document.getElementById('studyBranchInput').value = st.branch || '';
+            document.getElementById('studySchemasInput').value = st.schemas || '';
+            document.getElementById('studyFirstActionInput').value = st.firstAction || '';
+            document.getElementById('studyCheckCore').checked = !!st.checkCore;
+            document.getElementById('studyCheckProd').checked = !!st.checkProd;
+            document.getElementById('studyCheckCommit').checked = !!st.checkCommit;
+            document.getElementById('studyCommitMsgInput').value = st.commitMsg || '';
+            document.getElementById('studyHookInput').value = st.unfinishedHook || '';
+
+            document.getElementById('benchBasePrec').value = st.benchBasePrec ?? 62;
+            document.getElementById('benchNewPrec').value = st.benchNewPrec ?? 81;
+            document.getElementById('benchBaseLat').value = st.benchBaseLat ?? 410;
+            document.getElementById('benchNewLat').value = st.benchNewLat ?? 580;
+
+            updateStudyBenchmarksUI(st.benchBasePrec, st.benchNewPrec, st.benchBaseLat, st.benchNewLat);
+        }
+
+        function saveStudyField(field, val) {
+            const state = getDayState();
+            state.study[field] = val;
+
+            // Auto-check morning/evening AI blocks on Routine tab when milestones are checked
+            if (field === 'firstAction' && val.trim().length > 3) {
+                state.checkedBlocks['wd_13'] = true;
+            }
+            if (field === 'checkCommit' && val === true) {
+                state.checkedBlocks[state.mode === 'weekend' ? 'we_4' : 'wd_2'] = true;
+            }
+
+            saveDayState(state);
+        }
+
+        function updateStudyBenchmarks() {
+            const basePrec = Number(document.getElementById('benchBasePrec').value) || 0;
+            const newPrec = Number(document.getElementById('benchNewPrec').value) || 0;
+            const baseLat = Number(document.getElementById('benchBaseLat').value) || 0;
+            const newLat = Number(document.getElementById('benchNewLat').value) || 0;
+
+            const state = getDayState();
+            state.study.benchBasePrec = basePrec;
+            state.study.benchNewPrec = newPrec;
+            state.study.benchBaseLat = baseLat;
+            state.study.benchNewLat = newLat;
+            saveDayState(state);
+
+            updateStudyBenchmarksUI(basePrec, newPrec, baseLat, newLat);
+        }
+
+        function updateStudyBenchmarksUI(basePrec, newPrec, baseLat, newLat) {
+            const precDelta = newPrec - basePrec;
+            const latDelta = newLat - baseLat;
+            const pSign = precDelta >= 0 ? `+${precDelta}%` : `${precDelta}%`;
+            const lSign = latDelta >= 0 ? `+${latDelta}ms` : `${latDelta}ms`;
+            document.getElementById('benchmarkDeltaSummary').textContent = `${pSign} Prec | ${lSign}`;
+        }
+
+        function copyStudyLogMarkdown() {
+            const state = getDayState();
+            const st = state.study;
+            const precDelta = (st.benchNewPrec - st.benchBasePrec);
+            const latDelta = (st.benchNewLat - st.benchBaseLat);
+
+            const md = `### ${currentDateStr} — AI Engineering Handoff Log
+
+#### 🌙 9:40 PM – 10:10 PM: Evening Context Load
+- **1. Docs / Papers Read (15m):**
+  - ${st.docs || '[Not logged]'}
+  - *Key Takeaway:* ${st.takeaway || '[Not logged]'}
+- **2. IDE Staged for 7:30 AM (10m):**
+  - **Branch / File:** \`${st.branch || 'feat/module -> src/services/module.py'}\`
+  - **Pydantic Schema Needed:** \`${st.schemas || 'InputSchema -> OutputSchema'}\`
+- **3. 7:30 AM First Action (5m):**
+  - [${st.checkCore ? 'x' : ' '}] Start by writing: \`${st.firstAction || 'Implement core service function'}\`
+
+#### ☀️ 7:30 AM – 9:30 AM: Morning Deep Build
+- **7:30 AM – 8:30 AM (Core Logic):**
+  - [${st.checkCore ? 'x' : ' '}] Implement core module without looking at class \`.ipynb\`
+- **8:30 AM – 9:20 AM (Productionize):**
+  - [${st.checkProd ? 'x' : ' '}] Add type hints, \`async/await\`, Pydantic validation, and error handling
+- **9:20 AM – 9:30 AM (Commit & Tonight's Hook):**
+  - **Git Commit:** \`${st.commitMsg || 'wip'}\`
+  - **Broken / Unfinished (Feed into 9:40 PM tonight):** ${st.unfinishedHook || 'None'}
+
+#### 📊 Portfolio Benchmark Delta
+| Metric | Baseline | New Pipeline | Delta |
+| :--- | :--- | :--- | :--- |
+| **Retrieval Precision** | ${st.benchBasePrec}% | ${st.benchNewPrec}% | ${precDelta >= 0 ? '+' + precDelta : precDelta}% |
+| **P95 Latency (ms)** | ${st.benchBaseLat}ms | ${st.benchNewLat}ms | ${latDelta >= 0 ? '+' + latDelta : latDelta}ms |
+`;
+            copyTextToClipboard(md, 'Copied STUDY_LOG.md entry to clipboard!');
+        }
+
+        function renderKitchenTab() {
+            const state = getDayState();
+
+            // 2-Night Batch Button
+            const batchBtn = document.getElementById('twoNightBatchBtn');
+            batchBtn.className = state.fuel.twoNightBatch
+                ? 'shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all flex items-center gap-1 bg-emerald-500 text-slate-950 border-emerald-400'
+                : 'shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all flex items-center gap-1 bg-slate-900 text-slate-300 border-slate-700';
+
+            // Elapsed minutes in 15-min timer
+            const elapsedSeconds = (15 * 60) - kitchenSecondsRemaining;
+            const elapsedMinutes = elapsedSeconds / 60;
+
+            const stepsEl = document.getElementById('kitchenStepsList');
+            stepsEl.innerHTML = KITCHEN_RESET_STEPS.map(step => {
+                const isChecked = !!state.kitchenSteps[step.id];
+                const isCurrentBracket = kitchenTimerRunning && elapsedMinutes >= step.minStart && elapsedMinutes < step.minEnd;
+
+                return `
+                    <div onclick="toggleKitchenStep('${step.id}')" class="p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
+                        isCurrentBracket
+                            ? 'bg-emerald-500/15 border-emerald-400 shadow-md'
+                            : isChecked
+                            ? 'bg-slate-900/40 border-slate-800/70 opacity-60'
+                            : 'bg-slate-900/80 border-slate-800'
+                    }">
+                        <button type="button" class="mt-0.5 w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 ${
+                            isChecked ? 'bg-emerald-500 border-emerald-400 text-slate-950' : 'border-slate-600 bg-slate-950'
+                        }">
+                            ${isChecked ? '<i class="ph-bold ph-check text-xs"></i>' : ''}
+                        </button>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold ${isChecked ? 'line-through text-slate-400' : 'text-white'}">${step.label}</span>
+                                ${isCurrentBracket ? '<span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-400 text-slate-950">ACTIVE STEP</span>' : ''}
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-0.5">${step.sub}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render Fuel Checklists
+            document.getElementById('shake2TimingToggle').textContent = `Shake #2: ${state.fuel.shake2Timing || '3:15 PM Pre'}`;
+            const nutContainer = document.getElementById('nutritionChecklistContainer');
+            nutContainer.innerHTML = NUTRITION_ITEMS.map(item => {
+                const done = !!state.fuel[item.key];
+                return `
+                    <div onclick="toggleFuelItem('${item.key}')" class="p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                        done ? 'bg-emerald-500/15 border-emerald-500/40' : 'bg-slate-900/75 border-slate-800'
+                    }">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 ${
+                                done ? 'bg-emerald-500 border-emerald-400 text-slate-950' : 'border-slate-600 bg-slate-950'
+                            }">
+                                ${done ? '<i class="ph-bold ph-check text-xs"></i>' : ''}
+                            </div>
+                            <div class="truncate">
+                                <div class="text-xs font-bold ${done ? 'line-through text-slate-300' : 'text-white'} truncate">${item.title}</div>
+                                <div class="text-[10px] text-slate-400 truncate">${item.sub}</div>
+                            </div>
+                        </div>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-slate-800 text-emerald-300 shrink-0">${item.macro}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Render Hydration Glasses (8 x 0.5L = 4.0L)
+            const glasses = state.hydrationGlasses || 0;
+            document.getElementById('hydrationLitersBadge').textContent = `${(glasses * 0.5).toFixed(1)} / 4.0 L`;
+            const hydGrid = document.getElementById('hydrationGlassesGrid');
+            hydGrid.innerHTML = Array.from({ length: 8 }).map((_, idx) => {
+                const filled = idx < glasses;
+                return `
+                    <button onclick="setHydrationGlasses(${idx + 1})" class="h-10 rounded-xl border flex flex-col items-center justify-center transition-all active:scale-90 ${
+                        filled
+                            ? 'bg-sky-500/25 border-sky-400 text-sky-300 shadow-sm shadow-sky-500/20'
+                            : 'bg-slate-900/70 border-slate-800 text-slate-600'
+                    }">
+                        <i class="ph-fill ph-drop text-sm"></i>
+                        <span class="font-mono text-[9px]">.5L</span>
+                    </button>
+                `;
+            }).join('');
+
+            // Render Marinade Selector
+            document.querySelectorAll('.marinade-pill').forEach(btn => {
+                const isSelected = btn.getAttribute('data-marinade') === selectedMarinade;
+                btn.className = `marinade-pill shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                    isSelected
+                        ? 'bg-amber-500 text-slate-950 border-amber-400'
+                        : 'bg-slate-900/80 text-slate-300 border-slate-800'
+                }`;
+            });
+            const rec = MARINADE_RECIPES[selectedMarinade];
+            document.getElementById('marinadeRecipeCard').innerHTML = `
+                <h4 class="text-xs font-bold text-amber-300">${rec.title}</h4>
+                <ul class="text-xs text-slate-200 space-y-1 list-disc list-inside">
+                    ${rec.ingredients.map(i => `<li>${i}</li>`).join('')}
+                </ul>
+                <p class="text-[11px] text-emerald-400 pt-1 border-t border-slate-800">💡 ${rec.tip}</p>
+            `;
+        }
+
+        function toggleKitchenStep(stepId) {
+            const state = getDayState();
+            state.kitchenSteps[stepId] = !state.kitchenSteps[stepId];
+
+            // If all 5 steps checked, mark the 9:00 PM Kitchen Reset block done on Routine tab
+            const allDone = KITCHEN_RESET_STEPS.every(s => state.kitchenSteps[s.id]);
+            if (allDone) {
+                state.checkedBlocks['wd_12'] = true;
+            }
+            saveDayState(state);
+            renderKitchenTab();
+        }
+
+        function toggleTwoNightBatch() {
+            const state = getDayState();
+            state.fuel.twoNightBatch = !state.fuel.twoNightBatch;
+            if (state.fuel.twoNightBatch) {
+                state.kitchenSteps['kr_3'] = true;
+            }
+            saveDayState(state);
+            renderKitchenTab();
+            showToast(state.fuel.twoNightBatch ? '2-Night Chicken Batch Active! Tomorrow night skips Step 3.' : 'Single-Night Batch Set');
+        }
+
+        function toggleKitchenResetTimer() {
+            const playIcon = document.getElementById('kitchenTimerPlayIcon');
+            const playText = document.getElementById('kitchenTimerPlayText');
+
+            if (kitchenTimerRunning) {
+                clearInterval(kitchenTimerInterval);
+                kitchenTimerRunning = false;
+                playIcon.className = 'ph-fill ph-play';
+                playText.textContent = 'Resume';
+                renderKitchenTab();
+                return;
+            }
+
+            kitchenTimerRunning = true;
+            playIcon.className = 'ph-fill ph-pause';
+            playText.textContent = 'Pause';
+            renderKitchenTab();
+
+            kitchenTimerInterval = setInterval(() => {
+                kitchenSecondsRemaining--;
+                if (kitchenSecondsRemaining <= 0) {
+                    clearInterval(kitchenTimerInterval);
+                    kitchenTimerRunning = false;
+                    kitchenSecondsRemaining = 0;
+                    playSubtleChime();
+                    showToast('15-Min Kitchen Reset Complete! Spotless kitchen 🎉');
+                }
+                updateKitchenTimerDisplay();
+                renderKitchenTab();
+            }, 1000);
+        }
+
+        function resetKitchenTimer() {
+            if (kitchenTimerInterval) clearInterval(kitchenTimerInterval);
+            kitchenTimerRunning = false;
+            kitchenSecondsRemaining = 15 * 60;
+            document.getElementById('kitchenTimerPlayIcon').className = 'ph-fill ph-play';
+            document.getElementById('kitchenTimerPlayText').textContent = 'Start 15m Reset';
+            updateKitchenTimerDisplay();
+            renderKitchenTab();
+        }
+
+        function updateKitchenTimerDisplay() {
+            const mm = String(Math.floor(kitchenSecondsRemaining / 60)).padStart(2, '0');
+            const ss = String(kitchenSecondsRemaining % 60).padStart(2, '0');
+            document.getElementById('kitchenTimerDisplay').textContent = `${mm}:${ss}`;
+
+            const pct = Math.max(0, Math.round((kitchenSecondsRemaining / (15 * 60)) * 100));
+            document.getElementById('kitchenTimerCircle').setAttribute('stroke-dasharray', `${pct}, 100`);
+
+            const elapsedM = ((15 * 60) - kitchenSecondsRemaining) / 60;
+            const currentStep = KITCHEN_RESET_STEPS.find(s => elapsedM >= s.minStart && elapsedM < s.minEnd);
+            document.getElementById('kitchenActiveStepBanner').textContent = currentStep
+                ? `Now: ${currentStep.label}`
+                : kitchenSecondsRemaining === 0
+                ? 'All 5 Reset Steps Complete!'
+                : 'Ready: Press Start at 9:00 PM';
+        }
+
+        function toggleAirFryerTimer() {
+            const btn = document.getElementById('airFryerStartBtn');
+            if (airFryerRunning) {
+                clearInterval(airFryerInterval);
+                airFryerRunning = false;
+                btn.textContent = 'Resume Cook';
+                return;
+            }
+            airFryerRunning = true;
+            btn.textContent = 'Pause (Cooking...)';
+            airFryerInterval = setInterval(() => {
+                airFryerSecondsRemaining--;
+                const mm = String(Math.floor(airFryerSecondsRemaining / 60)).padStart(2, '0');
+                const ss = String(airFryerSecondsRemaining % 60).padStart(2, '0');
+                document.getElementById('airFryerTimerDisplay').textContent = `${mm}:${ss}`;
+
+                if (airFryerSecondsRemaining <= 0) {
+                    clearInterval(airFryerInterval);
+                    airFryerRunning = false;
+                    airFryerSecondsRemaining = 25 * 60;
+                    btn.textContent = 'Start 25m Cook';
+                    playSubtleChime();
+                    showToast('Air Fryer Chicken is Ready! Time for 6:30 PM Dinner 🍗', 'ph-fire text-rose-400');
+                }
+            }, 1000);
+        }
+
+        function resetAirFryerTimer() {
+            if (airFryerInterval) clearInterval(airFryerInterval);
+            airFryerRunning = false;
+            airFryerSecondsRemaining = 25 * 60;
+            document.getElementById('airFryerTimerDisplay').textContent = '25:00';
+            document.getElementById('airFryerStartBtn').textContent = 'Start 25m Cook';
+        }
+
+        function toggleFuelItem(key) {
+            const state = getDayState();
+            state.fuel[key] = !state.fuel[key];
+            saveDayState(state);
+            renderAll();
+        }
+
+        function cycleShake2Timing() {
+            const state = getDayState();
+            state.fuel.shake2Timing = state.fuel.shake2Timing === '3:15 PM Pre' ? '5:30 PM Light Post' : '3:15 PM Pre';
+            saveDayState(state);
+            renderKitchenTab();
+            showToast(`Shake #2 set to ${state.fuel.shake2Timing}`);
+        }
+
+        function setHydrationGlasses(count) {
+            const state = getDayState();
+            state.hydrationGlasses = state.hydrationGlasses === count ? count - 1 : count;
+            saveDayState(state);
+            renderKitchenTab();
+        }
+
+        function selectMarinade(key) {
+            selectedMarinade = key;
+            renderKitchenTab();
+        }
+
+        function onModTypeChange() {
+            const type = document.getElementById('modTypeSelect').value;
+            document.getElementById('modTargetWrap').classList.toggle('opacity-40', type === 'checkbox');
+        }
+
+        function renderPinnedModulesOnRoutine(state) {
+            const mods = getGlobalModules().filter(m => m.pinned);
+            const section = document.getElementById('pinnedModulesSection');
+            const grid = document.getElementById('pinnedModulesGrid');
+
+            if (mods.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+
+            grid.innerHTML = mods.map(m => renderModuleWidgetCard(m, state)).join('');
+        }
+
+        function renderModuleWidgetCard(mod, state, showManageButtons = false) {
+            const val = state.moduleValues[mod.id];
+
+            let controlHTML = '';
+            if (mod.type === 'checkbox') {
+                const checked = !!val;
+                controlHTML = `
+                    <button onclick="toggleCustomModuleCheckbox('${mod.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                        checked
+                            ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+                            : 'bg-slate-900 border-slate-700 text-slate-300'
+                    }">
+                        ${checked ? '✓ Done' : 'Mark Done'}
+                    </button>
+                `;
+            } else if (mod.type === 'counter') {
+                const count = Number(val) || 0;
+                const pct = mod.target ? Math.min(100, Math.round((count / mod.target) * 100)) : 0;
+                controlHTML = `
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="adjustCustomModuleCounter('${mod.id}', -5)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 font-mono text-xs text-slate-300">-5</button>
+                        <button onclick="adjustCustomModuleCounter('${mod.id}', -1)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 font-mono text-xs text-slate-300">-1</button>
+                        <span class="font-mono text-xs font-bold text-emerald-400 px-1.5">${count}/${mod.target || 1} ${mod.unit || ''}</span>
+                        <button onclick="adjustCustomModuleCounter('${mod.id}', 1)" class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 font-mono text-xs font-bold text-emerald-300">+1</button>
+                        <button onclick="adjustCustomModuleCounter('${mod.id}', 5)" class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 font-mono text-xs font-bold text-emerald-300">+5</button>
+                    </div>
+                `;
+            } else {
+                const numVal = val ?? '';
+                controlHTML = `
+                    <div class="flex items-center gap-1.5">
+                        <input type="number" step="any" value="${numVal}" placeholder="0" oninput="setCustomModuleNumeric('${mod.id}', this.value)" class="w-20 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 font-mono text-xs font-bold text-white text-right focus:outline-none focus:border-indigo-400">
+                        <span class="text-[11px] font-mono text-slate-400">${mod.unit || ''}</span>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
+                            <i class="ph-bold ${mod.icon || 'ph-star'} text-base"></i>
+                        </div>
+                        <div class="truncate">
+                            <div class="text-xs font-bold text-white truncate">${mod.name}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">${mod.unit ? mod.unit : mod.type.toUpperCase()}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        ${controlHTML}
+                        ${showManageButtons ? `
+                            <button onclick="togglePinCustomModule('${mod.id}')" class="p-1.5 rounded-lg border ${mod.pinned ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' : 'bg-slate-800 border-slate-700 text-slate-500'}" title="Pin to Routine Tab">
+                                <i class="ph-fill ph-push-pin text-xs"></i>
+                            </button>
+                            <button onclick="deleteCustomModule('${mod.id}')" class="p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-rose-400" title="Delete Tracker">
+                                <i class="ph-bold ph-trash text-xs"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderModulesTab() {
+            const mods = getGlobalModules();
+            const state = getDayState();
+            document.getElementById('installedModulesCount').textContent = `${mods.length} active`;
+
+            const listEl = document.getElementById('allCustomModulesList');
+            if (mods.length === 0) {
+                listEl.innerHTML = `<div class="text-xs text-slate-500 py-3 text-center">No custom modules installed. Create one above!</div>`;
+                return;
+            }
+            listEl.innerHTML = mods.map(m => renderModuleWidgetCard(m, state, true)).join('');
+        }
+
+        function createCustomTrackerModule() {
+            const nameEl = document.getElementById('modNameInput');
+            const name = nameEl.value.trim();
+            if (!name) {
+                showToast('Enter a tracker name first', 'ph-warning text-amber-400');
+                return;
+            }
+            const type = document.getElementById('modTypeSelect').value;
+            const icon = document.getElementById('modIconSelect').value;
+            const target = Number(document.getElementById('modTargetInput').value) || 1;
+            const unit = document.getElementById('modUnitInput').value.trim();
+            const pinned = document.getElementById('modPinCheckbox').checked;
+
+            const mods = getGlobalModules();
+            mods.push({
+                id: 'mod_' + Date.now(),
+                name,
+                type,
+                icon,
+                target,
+                unit,
+                pinned
+            });
+            saveGlobalModules(mods);
+            nameEl.value = '';
+            document.getElementById('modUnitInput').value = '';
+            renderAll();
+            showToast(`Added "${name}" tracker module!`);
+        }
+
+        function toggleCustomModuleCheckbox(modId) {
+            const state = getDayState();
+            state.moduleValues[modId] = !state.moduleValues[modId];
+            saveDayState(state);
+            renderAll();
+        }
+
+        function adjustCustomModuleCounter(modId, delta) {
+            const state = getDayState();
+            const curr = Number(state.moduleValues[modId]) || 0;
+            state.moduleValues[modId] = Math.max(0, curr + delta);
+            saveDayState(state);
+            renderAll();
+        }
+
+        function setCustomModuleNumeric(modId, val) {
+            const state = getDayState();
+            state.moduleValues[modId] = val;
+            saveDayState(state);
+        }
+
+        function togglePinCustomModule(modId) {
+            const mods = getGlobalModules();
+            const target = mods.find(m => m.id === modId);
+            if (target) {
+                target.pinned = !target.pinned;
+                saveGlobalModules(mods);
+                renderAll();
+                showToast(target.pinned ? 'Pinned to Routine Tab' : 'Unpinned from Routine Tab');
+            }
+        }
+
+        function deleteCustomModule(modId) {
+            const mods = getGlobalModules().filter(m => m.id !== modId);
+            saveGlobalModules(mods);
+            renderAll();
+            showToast('Custom module removed');
+        }
+
+        function exportFullDataJSON() {
+            const dump = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith(STORAGE_PREFIX)) {
+                    dump[k] = localStorage.getItem(k);
+                }
+            }
+            const jsonStr = JSON.stringify(dump);
+            copyTextToClipboard(jsonStr, 'Full RoutineOS Backup JSON copied to clipboard!');
+        }
+
+        function downloadBackupFile() {
+            const dump = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith(STORAGE_PREFIX)) {
+                    dump[k] = localStorage.getItem(k);
+                }
+            }
+            const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `routineOS_backup_${currentDateStr}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Backup .JSON downloaded!');
+        }
+
+        function importFullDataJSON() {
+            const raw = document.getElementById('importJsonInput').value.trim();
+            if (!raw) {
+                showToast('Paste a backup JSON string first', 'ph-warning text-amber-400');
+                return;
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                Object.keys(parsed).forEach(k => {
+                    if (k.startsWith(STORAGE_PREFIX)) {
+                        localStorage.setItem(k, parsed[k]);
+                    }
+                });
+                document.getElementById('importJsonInput').value = '';
+                renderAll();
+                showToast('Backup restored successfully!');
+            } catch (e) {
+                showToast('Invalid JSON format', 'ph-warning text-rose-400');
+            }
+        }
+
+        function setupDynamicPWAHeadAssets() {
+            try {
+                // Generate crisp Apple Touch Icon on an offscreen canvas so iPhone Home Screen has a native icon
+                const canvas = document.createElement('canvas');
+                canvas.width = 180;
+                canvas.height = 180;
+                const ctx = canvas.getContext('2d');
+                const grad = ctx.createLinearGradient(0, 0, 180, 180);
+                grad.addColorStop(0, '#0B0F17');
+                grad.addColorStop(1, '#1E1B4B');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 180, 180);
+
+                // Emerald & Indigo ring
+                ctx.strokeStyle = '#10B981';
+                ctx.lineWidth = 12;
+                ctx.beginPath();
+                ctx.arc(90, 90, 56, 0, Math.PI * 1.65);
+                ctx.stroke();
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 46px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('OS', 90, 93);
+
+                const iconLink = document.createElement('link');
+                iconLink.rel = 'apple-touch-icon';
+                iconLink.href = canvas.toDataURL('image/png');
+                document.head.appendChild(iconLink);
+            } catch (e) {
+                // Fallback silently
+            }
+        }
+
+        function renderAll() {
+            renderRoutineTab();
+            renderWorkoutTab();
+            renderStudyTab();
+            renderKitchenTab();
+            renderModulesTab();
+        }
+
+        window.onload = function () {
+            setupDynamicPWAHeadAssets();
+            renderAll();
+            // Refresh live clock and active schedule spotlight every 20 seconds
+            setInterval(() => {
+                updateLiveClockAndActiveBlock();
+            }, 20000);
+        };
+    </script>
+</body>
+</html>
